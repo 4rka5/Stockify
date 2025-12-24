@@ -1,31 +1,27 @@
-@extends('layouts.admin')
+@extends('layouts.manajer')
 
-@section('title', 'Manajemen Supplier')
-@section('page-title', 'Manajemen Supplier')
+@section('title', 'Daftar Supplier')
+@section('page-title', 'Daftar Supplier')
 @section('breadcrumb', 'Home / Supplier')
 
 @section('content')
-<div class="mb-6 flex justify-between items-center">
+<div class="mb-6">
     <div>
         <h3 class="text-lg font-semibold text-gray-800">Daftar Supplier</h3>
-        <p class="text-sm text-gray-600">Kelola semua supplier</p>
+        <p class="text-sm text-gray-600">Lihat informasi supplier</p>
     </div>
-    <a href="{{ route('admin.suppliers.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
-        <i class="fas fa-plus mr-2"></i>
-        Tambah Supplier
-    </a>
 </div>
 
 <!-- Stats Card -->
 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-teal-500">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total Supplier</p>
                 <p class="text-3xl font-bold text-gray-800 mt-2">{{ $suppliers->count() }}</p>
             </div>
-            <div class="bg-blue-100 rounded-full p-3">
-                <i class="fas fa-truck text-blue-500 text-2xl"></i>
+            <div class="bg-teal-100 rounded-full p-3">
+                <i class="fas fa-truck text-teal-500 text-2xl"></i>
             </div>
         </div>
     </div>
@@ -42,7 +38,7 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-purple-500">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Rata-rata Produk/Supplier</p>
@@ -50,8 +46,8 @@
                     {{ $suppliers->count() > 0 ? number_format($suppliers->sum('products_count') / $suppliers->count(), 1) : 0 }}
                 </p>
             </div>
-            <div class="bg-purple-100 rounded-full p-3">
-                <i class="fas fa-chart-line text-purple-500 text-2xl"></i>
+            <div class="bg-blue-100 rounded-full p-3">
+                <i class="fas fa-chart-line text-blue-500 text-2xl"></i>
             </div>
         </div>
     </div>
@@ -59,21 +55,21 @@
 
 <!-- Search -->
 <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-    <form action="{{ route('admin.suppliers.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+    <form action="{{ route('manajer.suppliers.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
             <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-search mr-1"></i> Cari Supplier
             </label>
             <input type="text" id="search" name="search" value="{{ $keyword ?? '' }}"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 placeholder="Cari berdasarkan nama, email, telepon, atau alamat...">
         </div>
         <div class="flex items-end gap-2">
-            <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+            <button type="submit" class="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition">
                 <i class="fas fa-search mr-2"></i>
                 Cari
             </button>
-            <a href="{{ route('admin.suppliers.index') }}" class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition">
+            <a href="{{ route('manajer.suppliers.index') }}" class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition">
                 <i class="fas fa-redo mr-2"></i>
                 Reset
             </a>
@@ -102,7 +98,6 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kontak</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Alamat</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jumlah Produk</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -112,7 +107,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex items-center">
                                 <div class="flex-shrink-0 h-10 w-10">
-                                    <div class="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                                    <div class="h-10 w-10 rounded-full bg-teal-500 flex items-center justify-center text-white font-bold">
                                         {{ strtoupper(substr($supplier->name, 0, 1)) }}
                                     </div>
                                 </div>
@@ -150,26 +145,10 @@
                                 {{ $supplier->products_count }} produk
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                            <div class="flex items-center space-x-2">
-                                <a href="{{ route('admin.suppliers.edit', $supplier->id) }}" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Edit">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit
-                                </a>
-                                <form action="{{ route('admin.suppliers.destroy', $supplier->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus supplier ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Hapus">
-                                        <i class="fas fa-trash mr-1"></i>
-                                        Hapus
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-12 text-center">
+                        <td colspan="5" class="px-6 py-12 text-center">
                             <i class="fas fa-truck text-gray-300 text-5xl mb-4"></i>
                             <p class="text-gray-500">Tidak ada data supplier</p>
                         </td>

@@ -15,10 +15,18 @@ class UserController extends Controller
         $this->userService = $userService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $users = $this->userService->getAllUsers();
-        return view('admin.users.index', compact('users'));
+        $keyword = $request->input('search');
+        $role = $request->input('role');
+
+        if ($keyword || $role) {
+            $users = $this->userService->searchAndFilterUsers($keyword, $role);
+        } else {
+            $users = $this->userService->getAllUsers();
+        }
+
+        return view('admin.users.index', compact('users', 'keyword', 'role'));
     }
 
     public function create()

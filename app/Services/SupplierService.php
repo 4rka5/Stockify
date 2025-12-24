@@ -25,6 +25,11 @@ class SupplierService
         return $this->supplierRepository->getAllWithProductCount();
     }
 
+    public function searchSuppliers($keyword = null)
+    {
+        return $this->supplierRepository->searchSuppliers($keyword);
+    }
+
     public function getSupplierById($id)
     {
         return $this->supplierRepository->findOrFail($id);

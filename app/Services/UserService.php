@@ -21,6 +21,11 @@ class UserService
         return $this->userRepository->all();
     }
 
+    public function searchAndFilterUsers($keyword = null, $role = null)
+    {
+        return $this->userRepository->searchAndFilter($keyword, $role);
+    }
+
     public function getUserById($id)
     {
         return $this->userRepository->findOrFail($id);

@@ -15,10 +15,17 @@ class SupplierController extends Controller
         $this->supplierService = $supplierService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $suppliers = $this->supplierService->getAllWithProductCount();
-        return view('admin.suppliers.index', compact('suppliers'));
+        $keyword = $request->input('search');
+
+        if ($keyword) {
+            $suppliers = $this->supplierService->searchSuppliers($keyword);
+        } else {
+            $suppliers = $this->supplierService->getAllWithProductCount();
+        }
+
+        return view('admin.suppliers.index', compact('suppliers', 'keyword'));
     }
 
     public function create()

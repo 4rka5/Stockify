@@ -29,4 +29,20 @@ class SupplierRepository extends BaseRepository
                 ->orWhere('phone', 'like', '%' . $keyword . '%');
         })->get();
     }
+
+    public function searchSuppliers($keyword = null)
+    {
+        $query = $this->model->withCount('products');
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                  ->orWhere('email', 'like', '%' . $keyword . '%')
+                  ->orWhere('phone', 'like', '%' . $keyword . '%')
+                  ->orWhere('address', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
+    }
 }

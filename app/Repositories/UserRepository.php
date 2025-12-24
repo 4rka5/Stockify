@@ -29,6 +29,24 @@ class UserRepository extends BaseRepository
         })->get();
     }
 
+    public function searchAndFilter($keyword = null, $role = null)
+    {
+        $query = $this->model->newQuery();
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                  ->orWhere('email', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        if ($role) {
+            $query->where('role', $role);
+        }
+
+        return $query->orderBy('created_at', 'desc')->get();
+    }
+
     public function getAdmins()
     {
         return $this->getByRole(User::ROLE_ADMIN);

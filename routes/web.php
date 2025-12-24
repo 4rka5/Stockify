@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\StockTransactionController;
 use App\Http\Controllers\Manajer\DashboardController as ManajerDashboardController;
 use App\Http\Controllers\Manajer\StockController as ManajerStockController;
+use App\Http\Controllers\Manajer\SupplierController as ManajerSupplierController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\StockController as StaffStockController;
 use App\Http\Controllers\NotificationController;
@@ -94,7 +95,7 @@ Route::middleware(['auth', 'role:manajer gudang'])->prefix('manajer')->name('man
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
     // Suppliers (Read Only)
-    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index');
+    Route::get('/suppliers', [ManajerSupplierController::class, 'index'])->name('suppliers.index');
 
     // Stock Management
     Route::get('/stock', [ManajerStockController::class, 'index'])->name('stock.index');
