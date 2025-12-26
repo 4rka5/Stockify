@@ -41,7 +41,7 @@ class ReportController extends Controller
     {
         // Handle quick filter presets
         $filter = $request->input('filter');
-        
+
         if ($filter) {
             switch ($filter) {
                 case 'today':

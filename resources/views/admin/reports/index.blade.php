@@ -14,22 +14,22 @@
 <div class="bg-white rounded-lg shadow-md p-4 mb-4">
     <div class="flex items-center gap-2 flex-wrap">
         <span class="text-sm font-medium text-gray-700">Filter Cepat:</span>
-        <a href="{{ route('admin.reports.index', ['filter' => 'today']) }}" 
+        <a href="{{ route('admin.reports.index', ['filter' => 'today']) }}"
            class="quick-filter px-4 py-2 {{ request('filter') == 'today' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
             <i class="fas fa-calendar-day mr-1"></i>
             Hari Ini
         </a>
-        <a href="{{ route('admin.reports.index', ['filter' => 'week']) }}" 
+        <a href="{{ route('admin.reports.index', ['filter' => 'week']) }}"
            class="quick-filter px-4 py-2 {{ request('filter') == 'week' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
             <i class="fas fa-calendar-week mr-1"></i>
             Minggu Ini
         </a>
-        <a href="{{ route('admin.reports.index', ['filter' => 'month']) }}" 
+        <a href="{{ route('admin.reports.index', ['filter' => 'month']) }}"
            class="quick-filter px-4 py-2 {{ request('filter') == 'month' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
             <i class="fas fa-calendar-alt mr-1"></i>
             Bulan Ini
         </a>
-        <a href="{{ route('admin.reports.index', ['filter' => 'year']) }}" 
+        <a href="{{ route('admin.reports.index', ['filter' => 'year']) }}"
            class="quick-filter px-4 py-2 {{ request('filter') == 'year' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
             <i class="fas fa-calendar mr-1"></i>
             Tahun Ini

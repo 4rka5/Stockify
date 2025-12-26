@@ -39,13 +39,13 @@ class SufficientStock implements Rule
         }
 
         $product = Product::find($this->productId);
-        
+
         if (!$product) {
             return false;
         }
 
         $this->availableStock = $product->current_stock;
-        
+
         // Cek apakah quantity yang diminta tidak melebihi stok tersedia
         return $this->availableStock >= $value;
     }

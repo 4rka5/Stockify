@@ -98,7 +98,7 @@ class StockTransactionController extends Controller
     {
         // Get transaksi yang akan diupdate untuk validasi
         $transaction = $this->stockTransactionService->getTransactionById($id);
-        
+
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
             'type' => 'required|in:masuk,keluar',

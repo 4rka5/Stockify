@@ -69,7 +69,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Stock Warning Alert -->
                 <div id="stockWarning" class="hidden p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <div class="flex">
@@ -217,7 +217,7 @@ function updateProductInfo() {
         document.getElementById('productMinStock').textContent = minimumStock + ' unit';
 
         productInfo.classList.remove('hidden');
-        
+
         // Check type to show warning
         checkStockWarning();
     } else {
@@ -230,10 +230,10 @@ function checkStockWarning() {
     const typeSelect = document.getElementById('type');
     const quantityInput = document.getElementById('quantity');
     const stockWarning = document.getElementById('stockWarning');
-    
+
     if (typeSelect.value === 'keluar') {
         const quantity = parseInt(quantityInput.value) || 0;
-        
+
         if (quantity > currentStock) {
             stockWarning.classList.remove('hidden');
             stockWarning.classList.remove('bg-yellow-50', 'border-yellow-200');
@@ -259,11 +259,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const select = document.getElementById('product_id');
     const typeSelect = document.getElementById('type');
     const quantityInput = document.getElementById('quantity');
-    
+
     if (select.value) {
         updateProductInfo();
     }
-    
+
     // Add event listeners
     typeSelect.addEventListener('change', checkStockWarning);
     quantityInput.addEventListener('input', checkStockWarning);
