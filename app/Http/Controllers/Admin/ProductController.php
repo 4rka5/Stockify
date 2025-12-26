@@ -24,9 +24,27 @@ class ProductController extends Controller
         $this->supplierService = $supplierService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $products = $this->productService->paginateProducts(15);
+        $keyword = $request->get('search');
+
+        if ($keyword) {
+            $products = $this->productService->searchProduct($keyword);
+            // Convert collection to paginator for consistency
+            $perPage = 15;
+            $currentPage = \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPage();
+            $currentItems = $products->slice(($currentPage - 1) * $perPage, $perPage)->values();
+            $products = new \Illuminate\Pagination\LengthAwarePaginator(
+                $currentItems,
+                $products->count(),
+                $perPage,
+                $currentPage,
+                ['path' => \Illuminate\Pagination\LengthAwarePaginator::resolveCurrentPath()]
+            );
+        } else {
+            $products = $this->productService->paginateProducts(15);
+        }
+
         return view('admin.products.index', compact('products'));
     }
 

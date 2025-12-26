@@ -65,4 +65,14 @@ abstract class BaseRepository
     {
         return $this->model->count();
     }
+
+    public function query()
+    {
+        return $this->model->query();
+    }
+
+    public function getAll()
+    {
+        return $this->model->all();
+    }
 }

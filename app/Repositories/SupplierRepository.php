@@ -43,6 +43,6 @@ class SupplierRepository extends BaseRepository
             });
         }
 
-        return $query->orderBy('created_at', 'desc')->get();
+        return $query->orderBy('id', 'desc')->get();
     }
 }

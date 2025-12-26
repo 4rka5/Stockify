@@ -19,8 +19,6 @@ class StockTransaction extends Model
         'notes',
     ];
 
-    public $timestamps = false;
-
     protected $casts = [
         'date' => 'datetime',
     ];

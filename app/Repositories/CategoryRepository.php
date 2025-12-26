@@ -18,6 +18,8 @@ class CategoryRepository extends BaseRepository
 
     public function findByName($name)
     {
-        return $this->model->where('name', 'like', '%' . $name . '%')->get();
+        return $this->model->where('name', 'like', '%' . $name . '%')
+            ->withCount('products')
+            ->get();
     }
 }

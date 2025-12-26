@@ -7,6 +7,8 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\StockTransactionController;
+use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Manajer\DashboardController as ManajerDashboardController;
 use App\Http\Controllers\Manajer\StockController as ManajerStockController;
 use App\Http\Controllers\Manajer\SupplierController as ManajerSupplierController;
@@ -63,18 +65,20 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('users', UserController::class);
 
     // Stock Transactions
-    Route::get('/transactions', [StockTransactionController::class, 'index'])->name('transactions.index');
-    Route::get('/transactions/{id}', [StockTransactionController::class, 'show'])->name('transactions.show');
+    Route::resource('stock-transactions', StockTransactionController::class);
+    Route::post('/stock-transactions/{id}/approve', [StockTransactionController::class, 'approve'])->name('stock-transactions.approve');
+    Route::post('/stock-transactions/{id}/reject', [StockTransactionController::class, 'reject'])->name('stock-transactions.reject');
 
-    // Stock
-    Route::get('/stock', function () {
-        return view('admin.stock.index');
-    })->name('stock.index');
+    // Transactions alias (for menu compatibility)
+    Route::get('/transactions', [StockTransactionController::class, 'index'])->name('transactions.index');
+
+    // Stock Report
+    Route::get('/stock', [StockController::class, 'index'])->name('stock.index');
 
     // Reports
-    Route::get('/reports', function () {
-        return view('admin.reports.index');
-    })->name('reports.index');
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/export/stock', [ReportController::class, 'exportStock'])->name('reports.export.stock');
+    Route::get('/reports/export/transactions', [ReportController::class, 'exportTransactions'])->name('reports.export.transactions');
 
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');

@@ -15,10 +15,17 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $categories = $this->categoryService->getAllWithProductCount();
-        return view('admin.categories.index', compact('categories'));
+        $keyword = $request->get('search');
+
+        if ($keyword) {
+            $categories = $this->categoryService->searchCategory($keyword);
+        } else {
+            $categories = $this->categoryService->getAllWithProductCount();
+        }
+
+        return view('admin.categories.index', compact('categories', 'keyword'));
     }
 
     public function create()

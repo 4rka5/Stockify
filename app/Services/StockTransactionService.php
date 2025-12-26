@@ -91,8 +91,18 @@ class StockTransactionService
             DB::beginTransaction();
 
             $transaction = $this->stockTransactionRepository->findOrFail($id);
+            
+            // Validasi stok untuk transaksi keluar
+            if ($transaction->type === 'keluar') {
+                $product = $this->productRepository->findOrFail($transaction->product_id);
+                $currentStock = $product->current_stock;
+                
+                if ($currentStock < $transaction->quantity) {
+                    throw new Exception("Stok tidak mencukupi! Stok tersedia: {$currentStock} unit, diminta: {$transaction->quantity} unit");
+                }
+            }
 
-            $status = $transaction->type === 'in' ? 'diterima' : 'dikeluarkan';
+            $status = $transaction->type === 'masuk' ? 'diterima' : 'dikeluarkan';
 
             $this->stockTransactionRepository->update($id, ['status' => $status]);
 

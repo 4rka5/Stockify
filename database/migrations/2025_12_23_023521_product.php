@@ -17,11 +17,11 @@ return new class extends Migration
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->string('name');
             $table->string('sku')->unique();
-            $table->string('description')->nullable();
-            $table->decimal('purchase_price');
-            $table->decimal('selling_price');
+            $table->text('description')->nullable();
+            $table->decimal('purchase_price', 15, 2);
+            $table->decimal('selling_price', 15, 2);
             $table->string('image')->nullable();
-            $table->integer('minimum_stock');
+            $table->integer('minimum_stock')->default(0);
         });
     }
 

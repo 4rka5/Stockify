@@ -51,13 +51,13 @@
                     <i class="fas fa-users w-6"></i>
                     <span>User</span>
                 </a>
-                <a href="{{ route('admin.transactions.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.transactions.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
+                <a href="{{ route('admin.stock-transactions.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.stock-transactions.*') || request()->routeIs('admin.transactions.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-exchange-alt w-6"></i>
-                    <span>Transaksi</span>
+                    <span>Transaksi Stok</span>
                 </a>
                 <a href="{{ route('admin.stock.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.stock.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-warehouse w-6"></i>
-                    <span>Stok</span>
+                    <span>Laporan Stok</span>
                 </a>
                 <a href="{{ route('admin.reports.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.reports.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-chart-bar w-6"></i>
@@ -198,5 +198,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    @stack('scripts')
 </body>
 </html>
