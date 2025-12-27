@@ -12,6 +12,11 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Manajer\DashboardController as ManajerDashboardController;
 use App\Http\Controllers\Manajer\StockController as ManajerStockController;
 use App\Http\Controllers\Manajer\SupplierController as ManajerSupplierController;
+use App\Http\Controllers\Manajer\ProductController as ManajerProductController;
+use App\Http\Controllers\Manajer\ApprovalController as ManajerApprovalController;
+use App\Http\Controllers\Manajer\ReportController as ManajerReportController;
+use App\Http\Controllers\Manajer\StockOpnameController as ManajerStockOpnameController;
+use App\Http\Controllers\Manajer\TransactionController as ManajerTransactionController;
 use App\Http\Controllers\Staff\DashboardController as StaffDashboardController;
 use App\Http\Controllers\Staff\StockController as StaffStockController;
 use App\Http\Controllers\NotificationController;
@@ -59,7 +64,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('suppliers', SupplierController::class);
 
     // Products
+    Route::get('/products/approval', [ProductController::class, 'approval'])->name('products.approval');
     Route::resource('products', ProductController::class);
+    Route::post('/products/{id}/approve', [ProductController::class, 'approve'])->name('products.approve');
+    Route::post('/products/{id}/reject', [ProductController::class, 'reject'])->name('products.reject');
 
     // Users
     Route::resource('users', UserController::class);
@@ -91,9 +99,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 Route::middleware(['auth', 'role:manajer gudang'])->prefix('manajer')->name('manajer.')->group(function () {
     Route::get('/dashboard', [ManajerDashboardController::class, 'index'])->name('dashboard');
 
-    // Products (Read Only)
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/{id}', [ProductController::class, 'show'])->name('products.show');
+    // Products (Read Only + Create New with Approval)
+    Route::get('/products', [ManajerProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [ManajerProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [ManajerProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{id}', [ManajerProductController::class, 'show'])->name('products.show');
 
     // Categories (Read Only)
     Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
@@ -107,19 +117,26 @@ Route::middleware(['auth', 'role:manajer gudang'])->prefix('manajer')->name('man
     Route::post('/stock/out', [ManajerStockController::class, 'storeOut'])->name('stock.out.store');
     Route::post('/stock/{id}/approve', [ManajerStockController::class, 'approve'])->name('stock.approve');
     Route::post('/stock/{id}/reject', [ManajerStockController::class, 'reject'])->name('stock.reject');
+    Route::post('/stock/assign-opname', [ManajerStockController::class, 'assignStockOpname'])->name('stock.assign-opname');
 
     // Transactions
-    Route::get('/transactions', [StockTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions', [ManajerTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}', [ManajerTransactionController::class, 'show'])->name('transactions.show');
 
     // Reports
-    Route::get('/reports', function () {
-        return view('manajer.reports.index');
-    })->name('reports.index');
+    Route::get('/reports', [ManajerReportController::class, 'index'])->name('reports.index');
 
     // Approval
-    Route::get('/approval', function () {
-        return view('manajer.approval.index');
-    })->name('approval.index');
+    Route::get('/approval', [ManajerApprovalController::class, 'index'])->name('approval.index');
+    Route::post('/approval/{id}/approve', [ManajerApprovalController::class, 'approve'])->name('approval.approve');
+    Route::post('/approval/{id}/reject', [ManajerApprovalController::class, 'reject'])->name('approval.reject');
+    Route::post('/approval/opname/{id}/approve', [ManajerApprovalController::class, 'approveOpname'])->name('approval.opname.approve');
+    Route::post('/approval/opname/{id}/reject', [ManajerApprovalController::class, 'rejectOpname'])->name('approval.opname.reject');
+
+    // Stock Opname (Deprecated - merged with approval)
+    // Route::get('/stock-opname', [ManajerStockOpnameController::class, 'index'])->name('stock-opname.index');
+    // Route::post('/stock-opname/{id}/approve', [ManajerStockOpnameController::class, 'approve'])->name('stock-opname.approve');
+    // Route::post('/stock-opname/{id}/reject', [ManajerStockOpnameController::class, 'reject'])->name('stock-opname.reject');
 
     // Staff
     Route::get('/staff', function () {
@@ -143,13 +160,21 @@ Route::middleware(['auth', 'role:staff gudang'])->prefix('staff')->name('staff.'
 
     Route::get('/stock/check', [StaffStockController::class, 'check'])->name('stock.check');
 
+    // Stock Confirmation
+    Route::post('/stock/confirm/{id}', [StaffStockController::class, 'confirm'])->name('stock.confirm');
+
+    // Stock Opname (Input by Staff)
+    Route::get('/stock-opname', [\App\Http\Controllers\Staff\StockOpnameController::class, 'index'])->name('stock-opname.index');
+    Route::post('/stock-opname', [\App\Http\Controllers\Staff\StockOpnameController::class, 'store'])->name('stock-opname.store');
+    Route::get('/stock-opname/history', [\App\Http\Controllers\Staff\StockOpnameController::class, 'history'])->name('stock-opname.history');
+
     // Products (Read Only)
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products', [\App\Http\Controllers\Staff\ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/{id}', [\App\Http\Controllers\Staff\ProductController::class, 'show'])->name('products.show');
 
     // Transactions
-    Route::get('/transactions', function () {
-        return view('staff.transactions.index');
-    })->name('transactions.index');
+    Route::get('/transactions', [\App\Http\Controllers\Staff\TransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/{id}', [\App\Http\Controllers\Staff\TransactionController::class, 'show'])->name('transactions.show');
 
     // Notifications
     Route::get('/notifications', function () {

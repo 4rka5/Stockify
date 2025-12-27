@@ -95,11 +95,11 @@
                                     </div>
                                     <div class="mt-1 flex items-center text-sm text-gray-500">
                                         <i class="fas fa-user mr-2"></i>
-                                        <span>Oleh: {{ $transaction->user->name }}</span>
+                                        <span>Oleh: {{ $transaction->user->name ?? 'N/A' }}</span>
                                     </div>
                                     <div class="mt-1 flex items-center text-sm text-gray-500">
                                         <i class="fas fa-calendar mr-2"></i>
-                                        <span>{{ $transaction->date->format('d/m/Y H:i') }}</span>
+                                        <span>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}</span>
                                     </div>
                                     @if($transaction->notes)
                                         <div class="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">
@@ -165,11 +165,11 @@
                                     </div>
                                     <div class="mt-1 flex items-center text-sm text-gray-500">
                                         <i class="fas fa-user mr-2"></i>
-                                        <span>Oleh: {{ $transaction->user->name }}</span>
+                                        <span>Oleh: {{ $transaction->user->name ?? 'N/A' }}</span>
                                     </div>
                                     <div class="mt-1 flex items-center text-sm text-gray-500">
                                         <i class="fas fa-calendar mr-2"></i>
-                                        <span>{{ $transaction->date->format('d/m/Y H:i') }}</span>
+                                        <span>{{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}</span>
                                     </div>
                                     @if($transaction->notes)
                                         <div class="mt-2 p-2 bg-gray-50 rounded text-xs text-gray-600">
@@ -250,7 +250,7 @@
                                     </span>
                                 </td>
                                 <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $transaction->date->format('d/m/Y H:i') }}
+                                    {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
                                 </td>
                             </tr>
                         @endforeach

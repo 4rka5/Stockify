@@ -47,15 +47,11 @@
                         <i class="fas fa-box w-6"></i>
                         <span>Kelola Produk</span>
                     </a>
-                    <a href="{{ route('manajer.categories.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.categories*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-list w-6"></i>
-                        <span>Kategori</span>
-                    </a>
                     <a href="{{ route('manajer.suppliers.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.suppliers*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-truck w-6"></i>
                         <span>Supplier</span>
                     </a>
-                    <a href="{{ route('manajer.stock.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.stock*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
+                    <a href="{{ route('manajer.stock.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.stock.index') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-warehouse w-6"></i>
                         <span>Monitor Stok</span>
                     </a>
@@ -63,13 +59,13 @@
                         <i class="fas fa-exchange-alt w-6"></i>
                         <span>Transaksi</span>
                     </a>
-                    <a href="{{ route('manajer.reports.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.reports*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-chart-line w-6"></i>
-                        <span>Laporan</span>
-                    </a>
                     <a href="{{ route('manajer.approval.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.approval*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-check-circle w-6"></i>
                         <span>Persetujuan</span>
+                    </a>
+                    <a href="{{ route('manajer.reports.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.reports*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
+                        <i class="fas fa-chart-line w-6"></i>
+                        <span>Laporan</span>
                     </a>
                     <a href="{{ route('manajer.staff.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.staff*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-users w-6"></i>

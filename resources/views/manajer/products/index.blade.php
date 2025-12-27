@@ -1,50 +1,45 @@
-@extends('layouts.admin')
+@extends('layouts.manajer')
 
-@section('title', 'Manajemen Produk')
-@section('page-title', 'Manajemen Produk')
+@section('title', 'Daftar Produk')
+@section('page-title', 'Daftar Produk')
 @section('breadcrumb', 'Home / Produk')
 
 @section('content')
-<!-- Pending Approval Alert -->
-@if(isset($pendingCount) && $pendingCount > 0)
-<div class="bg-yellow-50 border-l-4 border-yellow-500 p-4 mb-6 rounded-lg shadow-sm">
-    <div class="flex items-center justify-between">
-        <div class="flex items-center">
-            <i class="fas fa-exclamation-circle text-yellow-500 text-2xl mr-3"></i>
-            <div>
-                <h4 class="text-yellow-800 font-semibold">Ada {{ $pendingCount }} produk menunggu approval</h4>
-                <p class="text-yellow-700 text-sm">Produk yang diajukan manajer perlu direview dan disetujui</p>
-            </div>
-        </div>
-        <a href="{{ route('admin.products.approval') }}" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg transition">
-            <i class="fas fa-eye mr-2"></i>
-            Lihat Sekarang
-        </a>
-    </div>
-</div>
-@endif
-
-<div class="mb-6 flex justify-between items-center">
+<div class="mb-6 flex justify-between items-start">
     <div>
         <h3 class="text-lg font-semibold text-gray-800">Daftar Produk</h3>
-        <p class="text-sm text-gray-600">Kelola semua produk</p>
+        <p class="text-sm text-gray-600">Lihat informasi semua produk</p>
     </div>
-    <a href="{{ route('admin.products.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
-        <i class="fas fa-plus mr-2"></i>
-        Tambah Produk
+    <a href="{{ route('manajer.products.create') }}" class="inline-flex items-center px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg">
+        <i class="fas fa-plus-circle mr-2"></i>
+        Ajukan Produk Baru
     </a>
+</div>
+
+<!-- Info Alert -->
+<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+    <div class="flex">
+        <div class="flex-shrink-0">
+            <i class="fas fa-info-circle text-blue-500 text-lg"></i>
+        </div>
+        <div class="ml-3">
+            <p class="text-sm text-blue-700">
+                <strong>Catatan:</strong> Untuk menambah produk baru, klik tombol "Ajukan Produk Baru". Produk akan muncul di daftar setelah admin menyetujui pengajuan Anda.
+            </p>
+        </div>
+    </div>
 </div>
 
 <!-- Stats Card -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+    <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-teal-500">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Total Produk</p>
                 <p class="text-3xl font-bold text-gray-800 mt-2">{{ $products->total() }}</p>
             </div>
-            <div class="bg-blue-100 rounded-full p-3">
-                <i class="fas fa-box text-blue-500 text-2xl"></i>
+            <div class="bg-teal-100 rounded-full p-3">
+                <i class="fas fa-box text-teal-500 text-2xl"></i>
             </div>
         </div>
     </div>
@@ -92,21 +87,31 @@
 
 <!-- Search & Filter -->
 <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-    <form action="{{ route('admin.products.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+    <div class="flex justify-between items-center mb-4">
+        <h3 class="text-md font-semibold text-gray-800">
+            <i class="fas fa-filter text-teal-500 mr-2"></i>
+            Pencarian Produk
+        </h3>
+        <a href="{{ route('manajer.products.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow hover:shadow-lg">
+            <i class="fas fa-plus mr-2"></i>
+            Tambah Produk
+        </a>
+    </div>
+    <form action="{{ route('manajer.products.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
             <label for="search" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-search mr-1"></i> Cari Produk
             </label>
             <input type="text" id="search" name="search" value="{{ request('search') }}"
-                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
                 placeholder="Cari berdasarkan nama, SKU, atau deskripsi...">
         </div>
         <div class="flex items-end gap-2">
-            <button type="submit" class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+            <button type="submit" class="px-6 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition">
                 <i class="fas fa-search mr-2"></i>
                 Cari
             </button>
-            <a href="{{ route('admin.products.index') }}" class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition">
+            <a href="{{ route('manajer.products.index') }}" class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition">
                 <i class="fas fa-redo mr-2"></i>
                 Reset
             </a>
@@ -178,19 +183,10 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                             <div class="flex items-center space-x-2">
-                                <a href="{{ route('admin.products.show', $product->id) }}" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition" title="Lihat">
-                                    <i class="fas fa-eye"></i>
+                                <a href="{{ route('manajer.products.show', $product->id) }}" class="inline-flex items-center px-3 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm rounded-lg transition" title="Lihat Detail">
+                                    <i class="fas fa-eye mr-1"></i>
+                                    Detail
                                 </a>
-                                <a href="{{ route('admin.products.edit', $product->id) }}" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Hapus">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
                             </div>
                         </td>
                     </tr>

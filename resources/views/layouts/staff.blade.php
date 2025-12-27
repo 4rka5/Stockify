@@ -47,6 +47,10 @@
                     <i class="fas fa-search w-6"></i>
                     <span>Cek Stok</span>
                 </a>
+                <a href="{{ route('staff.stock-opname.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.stock-opname.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
+                    <i class="fas fa-clipboard-check w-6"></i>
+                    <span>Stock Opname</span>
+                </a>
                 <a href="{{ route('staff.products.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.products.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
                     <i class="fas fa-box w-6"></i>
                     <span>Produk</span>
@@ -199,5 +203,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    @stack('scripts')
 </body>
 </html>

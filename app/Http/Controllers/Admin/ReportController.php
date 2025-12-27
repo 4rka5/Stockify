@@ -39,10 +39,16 @@ class ReportController extends Controller
      */
     public function index(Request $request)
     {
-        // Handle quick filter presets
+        // Prioritas: Manual date filter > Quick filter > Default
         $filter = $request->input('filter');
+        $hasManualDate = $request->has('start_date') || $request->has('end_date');
 
-        if ($filter) {
+        if ($hasManualDate) {
+            // Gunakan filter tanggal manual jika ada
+            $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+            $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
+        } elseif ($filter) {
+            // Gunakan quick filter jika tidak ada filter manual
             switch ($filter) {
                 case 'today':
                     $startDate = Carbon::today()->format('Y-m-d');
@@ -65,9 +71,9 @@ class ReportController extends Controller
                     $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
             }
         } else {
-            // Date range filter
-            $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
-            $endDate = $request->input('end_date', Carbon::now()->format('Y-m-d'));
+            // Default: bulan ini
+            $startDate = Carbon::now()->startOfMonth()->format('Y-m-d');
+            $endDate = Carbon::now()->format('Y-m-d');
         }
 
         // General Statistics

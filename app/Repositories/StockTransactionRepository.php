@@ -77,8 +77,8 @@ class StockTransactionRepository extends BaseRepository
     public function getTodayTransactions()
     {
         return $this->model->with(['product', 'user'])
-            ->whereDate('date', today())
-            ->orderBy('date', 'desc')
+            ->whereDate('created_at', today())
+            ->orderBy('created_at', 'desc')
             ->get();
     }
 

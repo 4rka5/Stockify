@@ -3,27 +3,38 @@
 namespace App\Http\Controllers\Staff;
 
 use App\Http\Controllers\Controller;
-use App\Services\StockTransactionService;
+use App\Models\StockTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
-    protected $stockTransactionService;
-
-    public function __construct(StockTransactionService $stockTransactionService)
-    {
-        $this->stockTransactionService = $stockTransactionService;
-    }
-
     public function index()
     {
-        $pendingIncoming = $this->stockTransactionService->getPendingTransactions()
-            ->where('type', 'in');
-        $pendingOutgoing = $this->stockTransactionService->getPendingTransactions()
-            ->where('type', 'out');
-        $myTransactions = $this->stockTransactionService->getTransactionsByUser(Auth::id())
-            ->take(10);
+        $userId = Auth::id();
+
+        // Get transactions assigned to current staff
+        $pendingIncoming = StockTransaction::with(['product', 'user'])
+            ->where('type', 'in')
+            ->where('status', 'pending')
+            ->where('assigned_to', $userId)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $pendingOutgoing = StockTransaction::with(['product', 'user'])
+            ->where('type', 'out')
+            ->where('status', 'pending')
+            ->where('assigned_to', $userId)
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
+        $myTransactions = StockTransaction::with(['product'])
+            ->where('assigned_to', $userId)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
 
         return view('staff.dashboard', compact(
             'pendingIncoming',

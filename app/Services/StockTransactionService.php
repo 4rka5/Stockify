@@ -92,17 +92,23 @@ class StockTransactionService
 
             $transaction = $this->stockTransactionRepository->findOrFail($id);
 
-            // Validasi stok untuk transaksi keluar
-            if ($transaction->type === 'keluar') {
+            // Determine status based on transaction type
+            if ($transaction->type === 'in') {
+                $status = 'diterima';
+            } elseif ($transaction->type === 'out') {
+                // Validasi stok untuk transaksi keluar
                 $product = $this->productRepository->findOrFail($transaction->product_id);
                 $currentStock = $product->current_stock;
 
                 if ($currentStock < $transaction->quantity) {
                     throw new Exception("Stok tidak mencukupi! Stok tersedia: {$currentStock} unit, diminta: {$transaction->quantity} unit");
                 }
-            }
 
-            $status = $transaction->type === 'masuk' ? 'diterima' : 'dikeluarkan';
+                $status = 'dikeluarkan';
+            } else {
+                // Fallback untuk type lama (masuk/keluar)
+                $status = $transaction->type === 'masuk' ? 'diterima' : 'dikeluarkan';
+            }
 
             $this->stockTransactionRepository->update($id, ['status' => $status]);
 
@@ -114,12 +120,23 @@ class StockTransactionService
         }
     }
 
-    public function rejectTransaction($id)
+    public function rejectTransaction($id, $reason = null)
     {
         try {
             DB::beginTransaction();
 
-            $this->stockTransactionRepository->update($id, ['status' => 'ditolak']);
+            $updateData = ['status' => 'ditolak'];
+
+            // Add reason to notes if provided
+            if ($reason) {
+                $transaction = $this->stockTransactionRepository->findOrFail($id);
+                $existingNotes = $transaction->notes;
+                $updateData['notes'] = $existingNotes
+                    ? $existingNotes . ' | Ditolak: ' . $reason
+                    : 'Ditolak: ' . $reason;
+            }
+
+            $this->stockTransactionRepository->update($id, $updateData);
 
             DB::commit();
             return true;

@@ -19,9 +19,14 @@ class Product extends Model
         'selling_price',
         'image',
         'minimum_stock',
+        'status',
+        'created_by',
+        'approved_by',
+        'approved_at',
+        'rejection_reason',
     ];
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $casts = [
         'purchase_price' => 'decimal:2',
@@ -42,6 +47,38 @@ class Product extends Model
     public function supplier()
     {
         return $this->belongsTo(Supplier::class);
+    }
+
+    /**
+     * Get the user who created the product.
+     */
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the user who approved the product.
+     */
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Scope for approved products only.
+     */
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    /**
+     * Scope for pending products.
+     */
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 
     /**

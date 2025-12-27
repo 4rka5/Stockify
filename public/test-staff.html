@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Staff Confirmation Buttons</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Test Staff Confirmation System</h1>
+
+        <!-- Test Card -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-lg font-bold mb-4">Test Transaction #12 - Dumbbell Set 20kg</h2>
+
+            <div class="flex gap-3">
+                <button onclick="testConfirm()" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    Test Konfirmasi
+                </button>
+                <button onclick="testReject()" class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg">
+                    <i class="fas fa-times-circle mr-2"></i>
+                    Test Tolak
+                </button>
+            </div>
+
+            <div id="result" class="mt-4 p-4 bg-gray-50 rounded hidden"></div>
+        </div>
+
+        <!-- Modal -->
+        <div id="rejectModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 z-50">
+            <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-lg bg-white">
+                <h3 class="text-lg font-semibold mb-4">Tolak Barang</h3>
+                <textarea id="reject_reason" class="w-full border rounded p-2 mb-4" placeholder="Alasan penolakan..."></textarea>
+                <div class="flex gap-3">
+                    <button onclick="closeRejectModal()" class="flex-1 px-4 py-2 bg-gray-300 rounded">Batal</button>
+                    <button onclick="submitReject()" class="flex-1 px-4 py-2 bg-red-500 text-white rounded">Tolak</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function testConfirm() {
+            const result = document.getElementById('result');
+            result.classList.remove('hidden');
+            result.innerHTML = '<strong>✅ Fungsi Konfirmasi Berjalan!</strong><br>Form akan disubmit ke: /staff/stock/confirm/12<br>Data: status=diterima';
+            console.log('testConfirm() called successfully');
+        }
+
+        function testReject() {
+            const modal = document.getElementById('rejectModal');
+            modal.classList.remove('hidden');
+            console.log('testReject() called - modal opened');
+        }
+
+        function closeRejectModal() {
+            const modal = document.getElementById('rejectModal');
+            modal.classList.add('hidden');
+            console.log('Modal closed');
+        }
+
+        function submitReject() {
+            const reason = document.getElementById('reject_reason').value;
+            const result = document.getElementById('result');
+            result.classList.remove('hidden');
+            result.innerHTML = '<strong>✅ Fungsi Tolak Berjalan!</strong><br>Form akan disubmit ke: /staff/stock/confirm/12<br>Data: status=ditolak, reason=' + reason;
+            closeRejectModal();
+            console.log('submitReject() called with reason:', reason);
+        }
+
+        console.log('Test page loaded successfully');
+        console.log('All functions available:', typeof testConfirm, typeof testReject);
+    </script>
+</body>
+</html>

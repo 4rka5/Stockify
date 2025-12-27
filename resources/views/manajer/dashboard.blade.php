@@ -63,7 +63,7 @@
                             <div>
                                 <p class="font-medium text-gray-800">{{ $transaction->product->name }}</p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $transaction->user->name }} • {{ $transaction->date->format('d/m/Y H:i') }}
+                                    {{ $transaction->user->name ?? 'N/A' }} • {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
                                 </p>
                             </div>
                             <div class="flex gap-2">
@@ -137,7 +137,7 @@
                             <div class="flex-1">
                                 <p class="font-medium text-gray-800">{{ $transaction->product->name }}</p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $transaction->user->name }} • {{ $transaction->date->format('H:i') }}
+                                    {{ $transaction->user->name ?? 'N/A' }} • {{ \Carbon\Carbon::parse($transaction->created_at)->format('H:i') }}
                                 </p>
                                 @if($transaction->notes)
                                     <p class="text-xs text-gray-500 mt-1">{{ $transaction->notes }}</p>
@@ -190,7 +190,7 @@
                             <div class="flex-1">
                                 <p class="font-medium text-gray-800">{{ $transaction->product->name }}</p>
                                 <p class="text-sm text-gray-600">
-                                    {{ $transaction->user->name }} • {{ $transaction->date->format('H:i') }}
+                                    {{ $transaction->user->name ?? 'N/A' }} • {{ \Carbon\Carbon::parse($transaction->created_at)->format('H:i') }}
                                 </p>
                                 @if($transaction->notes)
                                     <p class="text-xs text-gray-500 mt-1">{{ $transaction->notes }}</p>

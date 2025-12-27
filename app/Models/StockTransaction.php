@@ -12,6 +12,8 @@ class StockTransaction extends Model
     protected $fillable = [
         'product_id',
         'user_id',
+        'assigned_to',
+        'assigned_by',
         'type',
         'quantity',
         'date',
@@ -37,6 +39,22 @@ class StockTransaction extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the staff assigned to handle this transaction.
+     */
+    public function assignedStaff()
+    {
+        return $this->belongsTo(User::class, 'assigned_to');
+    }
+
+    /**
+     * Get the user who assigned this transaction.
+     */
+    public function assignedBy()
+    {
+        return $this->belongsTo(User::class, 'assigned_by');
     }
 
     /**

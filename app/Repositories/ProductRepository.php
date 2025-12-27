@@ -44,6 +44,7 @@ class ProductRepository extends BaseRepository
     public function getLowStockProducts()
     {
         return $this->model->with(['category', 'supplier'])
+            ->where('status', 'approved')
             ->get()
             ->filter(function ($product) {
                 return $product->isLowStock();
@@ -54,6 +55,7 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->with(['category', 'supplier'])
             ->where('category_id', $categoryId)
+            ->where('status', 'approved')
             ->get();
     }
 
@@ -61,12 +63,14 @@ class ProductRepository extends BaseRepository
     {
         return $this->model->with(['category', 'supplier'])
             ->where('supplier_id', $supplierId)
+            ->where('status', 'approved')
             ->get();
     }
 
     public function getTopStockProducts($limit = 5)
     {
         return $this->model->with(['category', 'supplier', 'stockTransactions'])
+            ->where('status', 'approved')
             ->get()
             ->sortByDesc(function ($product) {
                 return $product->current_stock;

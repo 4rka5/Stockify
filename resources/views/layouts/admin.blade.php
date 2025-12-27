@@ -35,9 +35,21 @@
                     <i class="fas fa-home w-6"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('admin.products.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.products.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
+                <a href="{{ route('admin.products.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.products.*') && !request()->routeIs('admin.products.approval') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-box w-6"></i>
                     <span>Produk</span>
+                </a>
+                <a href="{{ route('admin.products.approval') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.products.approval') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition relative">
+                    <i class="fas fa-check-circle w-6"></i>
+                    <span>Approval Produk</span>
+                    @php
+                        $pendingProductCount = \App\Models\Product::where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingProductCount > 0)
+                        <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                            {{ $pendingProductCount }}
+                        </span>
+                    @endif
                 </a>
                 <a href="{{ route('admin.categories.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.categories.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-tags w-6"></i>
@@ -127,24 +139,26 @@
                                         </div>
                                     </template>
                                     <template x-for="notification in notifications" :key="notification.id">
-                                        <a :href="'{{ url('/notifications') }}/' + notification.id + '/read'"
-                                           class="block p-4 hover:bg-gray-50 border-b border-gray-100 transition">
-                                            <div class="flex items-start space-x-3">
-                                                <div :class="{
-                                                    'bg-blue-100 text-blue-600': notification.type === 'info',
-                                                    'bg-green-100 text-green-600': notification.type === 'success',
-                                                    'bg-yellow-100 text-yellow-600': notification.type === 'warning',
-                                                    'bg-red-100 text-red-600': notification.type === 'danger'
-                                                }" class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
-                                                    <i class="fas fa-bell"></i>
+                                        <form :action="'{{ url('/notifications') }}/' + notification.id + '/read'" method="POST" class="block border-b border-gray-100">
+                                            @csrf
+                                            <button type="submit" class="w-full text-left p-4 hover:bg-gray-50 transition">
+                                                <div class="flex items-start space-x-3">
+                                                    <div :class="{
+                                                        'bg-blue-100 text-blue-600': notification.type === 'info',
+                                                        'bg-green-100 text-green-600': notification.type === 'success',
+                                                        'bg-yellow-100 text-yellow-600': notification.type === 'warning',
+                                                        'bg-red-100 text-red-600': notification.type === 'danger'
+                                                    }" class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0">
+                                                        <i class="fas fa-bell"></i>
+                                                    </div>
+                                                    <div class="flex-1 min-w-0">
+                                                        <p class="text-sm font-medium text-gray-900" x-text="notification.title"></p>
+                                                        <p class="text-xs text-gray-600 mt-1" x-text="notification.message"></p>
+                                                        <p class="text-xs text-gray-400 mt-1" x-text="new Date(notification.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'})"></p>
+                                                    </div>
                                                 </div>
-                                                <div class="flex-1 min-w-0">
-                                                    <p class="text-sm font-medium text-gray-900" x-text="notification.title"></p>
-                                                    <p class="text-xs text-gray-600 mt-1" x-text="notification.message"></p>
-                                                    <p class="text-xs text-gray-400 mt-1" x-text="new Date(notification.created_at).toLocaleDateString('id-ID', {day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'})"></p>
-                                                </div>
-                                            </div>
-                                        </a>
+                                            </button>
+                                        </form>
                                     </template>
                                 </div>
                                 <div class="p-3 border-t border-gray-200 text-center">

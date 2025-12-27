@@ -113,8 +113,9 @@
                                     $maxStock = $topStockProducts->first()->current_stock;
                                     $percentage = $maxStock > 0 ? ($product->current_stock / $maxStock) * 100 : 0;
                                     $colors = ['bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-yellow-500', 'bg-pink-500'];
+                                    $colorIndex = $index % count($colors); // Pastikan index selalu dalam range
                                 @endphp
-                                <div class="{{ $colors[$index] }} h-3 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
+                                <div class="{{ $colors[$colorIndex] }} h-3 rounded-full transition-all duration-500" style="width: {{ $percentage }}%"></div>
                             </div>
                         </div>
                     @endforeach
