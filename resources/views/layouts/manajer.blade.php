@@ -38,27 +38,54 @@
             </div>
 
                 <!-- Navigation -->
-                <nav class="mt-6">
+                <nav class="mt-6" x-data="{ openMaster: {{ request()->routeIs('manajer.products*', 'manajer.suppliers*') ? 'true' : 'false' }}, openStock: {{ request()->routeIs('manajer.stock*', 'manajer.transactions*') ? 'true' : 'false' }} }">
                     <a href="{{ route('manajer.dashboard') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.dashboard') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-home w-6"></i>
                         <span>Dashboard</span>
                     </a>
-                    <a href="{{ route('manajer.products.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.products*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-box w-6"></i>
-                        <span>Kelola Produk</span>
-                    </a>
-                    <a href="{{ route('manajer.suppliers.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.suppliers*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-truck w-6"></i>
-                        <span>Supplier</span>
-                    </a>
-                    <a href="{{ route('manajer.stock.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.stock.index') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-warehouse w-6"></i>
-                        <span>Monitor Stok</span>
-                    </a>
-                    <a href="{{ route('manajer.transactions.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.transactions*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-exchange-alt w-6"></i>
-                        <span>Transaksi</span>
-                    </a>
+
+                    <!-- Master Data Dropdown -->
+                    <div>
+                        <button @click="openMaster = !openMaster" class="flex items-center justify-between w-full px-6 py-3 {{ request()->routeIs('manajer.products*', 'manajer.suppliers*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
+                            <div class="flex items-center">
+                                <i class="fas fa-database w-6"></i>
+                                <span>Master Data</span>
+                            </div>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': openMaster }"></i>
+                        </button>
+                        <div x-show="openMaster" x-collapse class="bg-teal-900">
+                            <a href="{{ route('manajer.products.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.products*') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                                <i class="fas fa-box w-6 text-sm"></i>
+                                <span>Produk</span>
+                            </a>
+                            <a href="{{ route('manajer.suppliers.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.suppliers*') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                                <i class="fas fa-truck w-6 text-sm"></i>
+                                <span>Supplier</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Stok & Transaksi Dropdown -->
+                    <div>
+                        <button @click="openStock = !openStock" class="flex items-center justify-between w-full px-6 py-3 {{ request()->routeIs('manajer.stock*', 'manajer.transactions*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
+                            <div class="flex items-center">
+                                <i class="fas fa-warehouse w-6"></i>
+                                <span>Stok & Transaksi</span>
+                            </div>
+                            <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': openStock }"></i>
+                        </button>
+                        <div x-show="openStock" x-collapse class="bg-teal-900">
+                            <a href="{{ route('manajer.stock.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.stock.index') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                                <i class="fas fa-boxes w-6 text-sm"></i>
+                                <span>Monitor Stok</span>
+                            </a>
+                            <a href="{{ route('manajer.transactions.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.transactions*') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                                <i class="fas fa-exchange-alt w-6 text-sm"></i>
+                                <span>Riwayat Transaksi</span>
+                            </a>
+                        </div>
+                    </div>
+
                     <a href="{{ route('manajer.approval.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.approval*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-check-circle w-6"></i>
                         <span>Persetujuan</span>

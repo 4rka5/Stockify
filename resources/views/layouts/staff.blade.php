@@ -30,27 +30,54 @@
                 </div>
             </div>
 
-            <nav class="mt-6">
+            <nav class="mt-6" x-data="{ openTransaksi: {{ request()->routeIs('staff.stock.in', 'staff.stock.out') ? 'true' : 'false' }}, openMonitor: {{ request()->routeIs('staff.stock.check', 'staff.stock-opname.*') ? 'true' : 'false' }} }">
                 <a href="{{ route('staff.dashboard') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.dashboard') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
                     <i class="fas fa-home w-6"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('staff.stock.in') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.stock.in') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
-                    <i class="fas fa-arrow-down w-6"></i>
-                    <span>Barang Masuk</span>
-                </a>
-                <a href="{{ route('staff.stock.out') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.stock.out') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
-                    <i class="fas fa-arrow-up w-6"></i>
-                    <span>Barang Keluar</span>
-                </a>
-                <a href="{{ route('staff.stock.check') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.stock.check') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
-                    <i class="fas fa-search w-6"></i>
-                    <span>Cek Stok</span>
-                </a>
-                <a href="{{ route('staff.stock-opname.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.stock-opname.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
-                    <i class="fas fa-clipboard-check w-6"></i>
-                    <span>Stock Opname</span>
-                </a>
+
+                <!-- Transaksi Stok Dropdown -->
+                <div>
+                    <button @click="openTransaksi = !openTransaksi" class="flex items-center justify-between w-full px-6 py-3 {{ request()->routeIs('staff.stock.in', 'staff.stock.out') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-exchange-alt w-6"></i>
+                            <span>Transaksi Stok</span>
+                        </div>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': openTransaksi }"></i>
+                    </button>
+                    <div x-show="openTransaksi" x-collapse class="bg-purple-900">
+                        <a href="{{ route('staff.stock.in') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('staff.stock.in') ? 'bg-purple-800' : 'hover:bg-purple-800' }} transition">
+                            <i class="fas fa-arrow-down w-6 text-sm"></i>
+                            <span>Barang Masuk</span>
+                        </a>
+                        <a href="{{ route('staff.stock.out') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('staff.stock.out') ? 'bg-purple-800' : 'hover:bg-purple-800' }} transition">
+                            <i class="fas fa-arrow-up w-6 text-sm"></i>
+                            <span>Barang Keluar</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Monitor Stok Dropdown -->
+                <div>
+                    <button @click="openMonitor = !openMonitor" class="flex items-center justify-between w-full px-6 py-3 {{ request()->routeIs('staff.stock.check', 'staff.stock-opname.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-warehouse w-6"></i>
+                            <span>Monitor Stok</span>
+                        </div>
+                        <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': openMonitor }"></i>
+                    </button>
+                    <div x-show="openMonitor" x-collapse class="bg-purple-900">
+                        <a href="{{ route('staff.stock.check') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('staff.stock.check') ? 'bg-purple-800' : 'hover:bg-purple-800' }} transition">
+                            <i class="fas fa-search w-6 text-sm"></i>
+                            <span>Cek Stok</span>
+                        </a>
+                        <a href="{{ route('staff.stock-opname.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('staff.stock-opname.*') ? 'bg-purple-800' : 'hover:bg-purple-800' }} transition">
+                            <i class="fas fa-clipboard-check w-6 text-sm"></i>
+                            <span>Stock Opname</span>
+                        </a>
+                    </div>
+                </div>
+
                 <a href="{{ route('staff.products.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.products.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
                     <i class="fas fa-box w-6"></i>
                     <span>Produk</span>
@@ -59,13 +86,6 @@
                     <i class="fas fa-history w-6"></i>
                     <span>Riwayat</span>
                 </a>
-                {{-- <a href="{{ route('staff.notifications.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.notifications.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
-                    <i class="fas fa-bell w-6"></i>
-                    <span>Notifikasi</span>
-                    @if(isset($unreadNotifications) && $unreadNotifications > 0)
-                        <span class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1">{{ $unreadNotifications }}</span>
-                    @endif
-                </a> --}}
                 <a href="{{ route('staff.profile') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.profile*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
                     <i class="fas fa-user-circle w-6"></i>
                     <span>Profil Saya</span>
