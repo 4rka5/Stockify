@@ -65,9 +65,16 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     // Products
     Route::get('/products/approval', [ProductController::class, 'approval'])->name('products.approval');
+    Route::get('/products/import-form', [ProductController::class, 'importForm'])->name('products.import-form');
+    Route::post('/products/import', [ProductController::class, 'import'])->name('products.import');
+    Route::get('/products/export', [ProductController::class, 'export'])->name('products.export');
+    Route::get('/products/download-template', [ProductController::class, 'downloadTemplate'])->name('products.download-template');
     Route::resource('products', ProductController::class);
     Route::post('/products/{id}/approve', [ProductController::class, 'approve'])->name('products.approve');
     Route::post('/products/{id}/reject', [ProductController::class, 'reject'])->name('products.reject');
+
+    // Product Attributes
+    Route::resource('attributes', \App\Http\Controllers\Admin\ProductAttributeController::class);
 
     // Users
     Route::resource('users', UserController::class);
@@ -87,6 +94,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::get('/reports/export/stock', [ReportController::class, 'exportStock'])->name('reports.export.stock');
     Route::get('/reports/export/transactions', [ReportController::class, 'exportTransactions'])->name('reports.export.transactions');
+
+    // Activity Logs
+    Route::get('/activity-logs', [\App\Http\Controllers\Admin\ActivityLogController::class, 'index'])->name('activity-logs.index');
+    Route::get('/activity-logs/{id}', [\App\Http\Controllers\Admin\ActivityLogController::class, 'show'])->name('activity-logs.show');
+    Route::post('/activity-logs/cleanup', [\App\Http\Controllers\Admin\ActivityLogController::class, 'cleanup'])->name('activity-logs.cleanup');
 
     // Settings
     Route::get('/settings', [\App\Http\Controllers\Admin\SettingController::class, 'index'])->name('settings.index');
@@ -137,11 +149,6 @@ Route::middleware(['auth', 'role:manajer gudang'])->prefix('manajer')->name('man
     // Route::get('/stock-opname', [ManajerStockOpnameController::class, 'index'])->name('stock-opname.index');
     // Route::post('/stock-opname/{id}/approve', [ManajerStockOpnameController::class, 'approve'])->name('stock-opname.approve');
     // Route::post('/stock-opname/{id}/reject', [ManajerStockOpnameController::class, 'reject'])->name('stock-opname.reject');
-
-    // Staff
-    Route::get('/staff', function () {
-        return view('manajer.staff.index');
-    })->name('staff.index');
 
     // Profile
     Route::get('/profile', [\App\Http\Controllers\Manajer\ProfileController::class, 'index'])->name('profile');

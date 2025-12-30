@@ -29,10 +29,23 @@
         <h3 class="text-lg font-semibold text-gray-800">Daftar Produk</h3>
         <p class="text-sm text-gray-600">Kelola semua produk</p>
     </div>
-    <a href="{{ route('admin.products.create') }}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
-        <i class="fas fa-plus mr-2"></i>
-        Tambah Produk
-    </a>
+    <div class="flex gap-2">
+        <a href="{{ route('admin.products.export') }}"
+           class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+            <i class="fas fa-file-csv mr-2"></i>
+            Export CSV
+        </a>
+        <a href="{{ route('admin.products.import-form') }}"
+           class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition">
+            <i class="fas fa-file-import mr-2"></i>
+            Import
+        </a>
+        <a href="{{ route('admin.products.create') }}"
+           class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>
+            Tambah Produk
+        </a>
+    </div>
 </div>
 
 <!-- Stats Card -->

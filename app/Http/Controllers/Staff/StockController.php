@@ -7,6 +7,7 @@ use App\Services\StockTransactionService;
 use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\NotificationService;
+use App\Services\ActivityLogService;
 use App\Models\StockTransaction;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -19,17 +20,20 @@ class StockController extends Controller
     protected $productService;
     protected $categoryService;
     protected $notificationService;
+    protected $activityLogService;
 
     public function __construct(
         StockTransactionService $stockTransactionService,
         ProductService $productService,
         CategoryService $categoryService,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        ActivityLogService $activityLogService
     ) {
         $this->stockTransactionService = $stockTransactionService;
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->notificationService = $notificationService;
+        $this->activityLogService = $activityLogService;
     }
 
     public function in()
@@ -100,6 +104,13 @@ class StockController extends Controller
                 Auth::user()->name . ' mengajukan transaksi barang masuk untuk produk ' . $product->name . ' sebanyak ' . $validated['quantity'] . ' unit',
                 'info',
                 route('manajer.approval.index')
+            );
+
+            // Log activity
+            $this->activityLogService->logCreate(
+                'StockTransaction',
+                null,
+                'Staff mengajukan transaksi barang masuk untuk produk ' . $product->name . ' sebanyak ' . $validated['quantity'] . ' unit'
             );
 
             return back()->with('success', 'Transaksi barang masuk berhasil diajukan. Menunggu approval manajer.');
@@ -182,6 +193,13 @@ class StockController extends Controller
                 Auth::user()->name . ' mengajukan transaksi barang keluar untuk produk ' . $product->name . ' sebanyak ' . $validated['quantity'] . ' unit',
                 'warning',
                 route('manajer.approval.index')
+            );
+
+            // Log activity
+            $this->activityLogService->logCreate(
+                'StockTransaction',
+                null,
+                'Staff mengajukan transaksi barang keluar untuk produk ' . $product->name . ' sebanyak ' . $validated['quantity'] . ' unit'
             );
 
             return back()->with('success', 'Transaksi barang keluar berhasil diajukan. Menunggu approval manajer.');

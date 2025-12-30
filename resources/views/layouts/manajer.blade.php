@@ -67,10 +67,6 @@
                         <i class="fas fa-chart-line w-6"></i>
                         <span>Laporan</span>
                     </a>
-                    <a href="{{ route('manajer.staff.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.staff*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
-                        <i class="fas fa-users w-6"></i>
-                        <span>Kelola Staff</span>
-                    </a>
                     <a href="{{ route('manajer.profile') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.profile*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-user-circle w-6"></i>
                         <span>Profil Saya</span>

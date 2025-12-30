@@ -7,9 +7,13 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\SupplierService;
 use App\Services\NotificationService;
+use App\Services\ActivityLogService;
 use App\Models\Product;
+use App\Models\Category;
+use App\Models\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class ProductController extends Controller
 {
@@ -17,17 +21,20 @@ class ProductController extends Controller
     protected $categoryService;
     protected $supplierService;
     protected $notificationService;
+    protected $activityLogService;
 
     public function __construct(
         ProductService $productService,
         CategoryService $categoryService,
         SupplierService $supplierService,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        ActivityLogService $activityLogService
     ) {
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->supplierService = $supplierService;
         $this->notificationService = $notificationService;
+        $this->activityLogService = $activityLogService;
     }
 
     public function index(Request $request)
@@ -266,4 +273,243 @@ class ProductController extends Controller
             return back()->with('error', 'Gagal menolak produk: ' . $e->getMessage());
         }
     }
+
+    /**
+     * Export products to Excel
+     */
+    public function export()
+    {
+        $this->activityLogService->log('export', 'Mengekspor data produk ke Excel');
+
+        $products = Product::with(['category', 'supplier'])->get();
+
+        $filename = 'products_' . date('Y-m-d_His') . '.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Add BOM for UTF-8
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        // Headers
+        fputcsv($output, [
+            'SKU',
+            'Nama Produk',
+            'Kategori',
+            'Supplier',
+            'Deskripsi',
+            'Harga Beli',
+            'Harga Jual',
+            'Minimum Stok',
+            'Stok Saat Ini',
+            'Status',
+        ]);
+
+        // Data
+        foreach ($products as $product) {
+            fputcsv($output, [
+                $product->sku,
+                $product->name,
+                $product->category->name ?? '',
+                $product->supplier->name ?? '',
+                $product->description,
+                $product->purchase_price,
+                $product->selling_price,
+                $product->minimum_stock,
+                $product->current_stock,
+                $product->status,
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * Download import template
+     */
+    public function downloadTemplate()
+    {
+        $filename = 'template_import_produk.csv';
+
+        header('Content-Type: text/csv; charset=utf-8');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        $output = fopen('php://output', 'w');
+
+        // Add BOM for UTF-8
+        fprintf($output, chr(0xEF).chr(0xBB).chr(0xBF));
+
+        // Headers
+        fputcsv($output, [
+            'sku',
+            'name',
+            'category',
+            'supplier',
+            'description',
+            'purchase_price',
+            'selling_price',
+            'minimum_stock',
+        ]);
+
+        // Sample data
+        fputcsv($output, [
+            'PROD001',
+            'Contoh Produk 1',
+            'Elektronik',
+            'Supplier A',
+            'Deskripsi produk contoh',
+            '100000',
+            '150000',
+            '10',
+        ]);
+
+        fputcsv($output, [
+            'PROD002',
+            'Contoh Produk 2',
+            'Pakaian',
+            'Supplier B',
+            'Deskripsi produk contoh 2',
+            '50000',
+            '75000',
+            '5',
+        ]);
+
+        fclose($output);
+        exit;
+    }
+
+    /**
+     * Show import form
+     */
+    public function importForm()
+    {
+        return view('admin.products.import');
+    }
+
+    /**
+     * Import products from Excel
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt|max:2048',
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $handle = fopen($file->getRealPath(), 'r');
+
+            // Skip BOM if present
+            $bom = fread($handle, 3);
+            if ($bom !== chr(0xEF).chr(0xBB).chr(0xBF)) {
+                rewind($handle);
+            }
+
+            // Read header
+            $header = fgetcsv($handle);
+
+            if (!$header || !in_array('sku', $header)) {
+                fclose($handle);
+                return back()->with('error', 'Format file tidak valid. Pastikan file menggunakan template yang benar.');
+            }
+
+            $imported = 0;
+            $skipped = 0;
+            $errors = [];
+            $row = 1;
+
+            while (($data = fgetcsv($handle)) !== false) {
+                $row++;
+
+                // Convert to associative array
+                $rowData = array_combine($header, $data);
+
+                // Validate
+                $validator = Validator::make($rowData, [
+                    'sku' => 'required|string|unique:products,sku',
+                    'name' => 'required|string|max:255',
+                    'category' => 'required|string',
+                    'supplier' => 'required|string',
+                    'purchase_price' => 'required|numeric|min:0',
+                    'selling_price' => 'required|numeric|min:0',
+                    'minimum_stock' => 'required|integer|min:0',
+                ]);
+
+                if ($validator->fails()) {
+                    $errors[] = [
+                        'row' => $row,
+                        'errors' => $validator->errors()->all()
+                    ];
+                    $skipped++;
+                    continue;
+                }
+
+                // Find category
+                $category = Category::where('name', $rowData['category'])->first();
+                if (!$category) {
+                    $errors[] = [
+                        'row' => $row,
+                        'errors' => ["Kategori '{$rowData['category']}' tidak ditemukan"]
+                    ];
+                    $skipped++;
+                    continue;
+                }
+
+                // Find supplier
+                $supplier = Supplier::where('name', $rowData['supplier'])->first();
+                if (!$supplier) {
+                    $errors[] = [
+                        'row' => $row,
+                        'errors' => ["Supplier '{$rowData['supplier']}' tidak ditemukan"]
+                    ];
+                    $skipped++;
+                    continue;
+                }
+
+                // Create product
+                Product::create([
+                    'category_id' => $category->id,
+                    'supplier_id' => $supplier->id,
+                    'name' => $rowData['name'],
+                    'sku' => $rowData['sku'],
+                    'description' => $rowData['description'] ?? null,
+                    'purchase_price' => $rowData['purchase_price'],
+                    'selling_price' => $rowData['selling_price'],
+                    'minimum_stock' => $rowData['minimum_stock'],
+                    'status' => 'approved',
+                    'created_by' => Auth::id(),
+                    'approved_by' => Auth::id(),
+                    'approved_at' => now(),
+                ]);
+
+                $imported++;
+            }
+
+            fclose($handle);
+
+            $this->activityLogService->log(
+                'import',
+                "Mengimpor produk: {$imported} berhasil, {$skipped} dilewati"
+            );
+
+            if ($imported > 0 && $skipped == 0) {
+                return redirect()->route('admin.products.index')
+                    ->with('success', "Berhasil mengimpor {$imported} produk.");
+            } elseif ($imported > 0 && $skipped > 0) {
+                return redirect()->route('admin.products.index')
+                    ->with('warning', "Berhasil mengimpor {$imported} produk. {$skipped} baris dilewati.")
+                    ->with('import_errors', $errors);
+            } else {
+                return back()
+                    ->with('error', 'Tidak ada produk yang berhasil diimpor.')
+                    ->with('import_errors', $errors);
+            }
+        } catch (\Exception $e) {
+            return back()->with('error', 'Gagal mengimpor file: ' . $e->getMessage());
+        }
+    }
 }
+

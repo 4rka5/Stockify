@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.1/dist/flowbite.min.css" rel="stylesheet" />
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="bg-gray-100">
     <div class="flex h-screen overflow-hidden">
@@ -31,50 +32,106 @@
             </div>
 
             <nav class="mt-6">
+                <!-- Dashboard -->
                 <a href="{{ route('admin.dashboard') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.dashboard') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-home w-6"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('admin.products.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.products.*') && !request()->routeIs('admin.products.approval') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
-                    <i class="fas fa-box w-6"></i>
-                    <span>Produk</span>
-                </a>
-                <a href="{{ route('admin.products.approval') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.products.approval') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition relative">
-                    <i class="fas fa-check-circle w-6"></i>
-                    <span>Approval Produk</span>
-                    @php
-                        $pendingProductCount = \App\Models\Product::where('status', 'pending')->count();
-                    @endphp
-                    @if($pendingProductCount > 0)
-                        <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                            {{ $pendingProductCount }}
-                        </span>
-                    @endif
-                </a>
-                <a href="{{ route('admin.categories.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.categories.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
-                    <i class="fas fa-tags w-6"></i>
-                    <span>Kategori</span>
-                </a>
-                <a href="{{ route('admin.suppliers.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.suppliers.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
-                    <i class="fas fa-truck w-6"></i>
-                    <span>Supplier</span>
-                </a>
+
+                <!-- Produk Menu with Dropdown -->
+                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.products.*') || request()->routeIs('admin.attributes.*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" class="flex items-center justify-between w-full px-6 py-3 hover:bg-blue-700 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-box w-6"></i>
+                            <span>Produk</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" x-collapse class="bg-blue-800">
+                        <a href="{{ route('admin.products.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.products.index') || request()->routeIs('admin.products.create') || request()->routeIs('admin.products.edit') || request()->routeIs('admin.products.show') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-list mr-2"></i> Daftar Produk
+                        </a>
+                        <a href="{{ route('admin.attributes.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.attributes.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-list-ul mr-2"></i> Atribut
+                        </a>
+                        <a href="{{ route('admin.products.approval') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.products.approval') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition relative">
+                            <i class="fas fa-check-circle mr-2"></i> Approval
+                            @php
+                                $pendingProductCount = \App\Models\Product::where('status', 'pending')->count();
+                            @endphp
+                            @if($pendingProductCount > 0)
+                                <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                                    {{ $pendingProductCount }}
+                                </span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Master Data Menu with Dropdown -->
+                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.suppliers.*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" class="flex items-center justify-between w-full px-6 py-3 hover:bg-blue-700 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-database w-6"></i>
+                            <span>Master Data</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" x-collapse class="bg-blue-800">
+                        <a href="{{ route('admin.categories.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.categories.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-tags mr-2"></i> Kategori
+                        </a>
+                        <a href="{{ route('admin.suppliers.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.suppliers.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-truck mr-2"></i> Supplier
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Management -->
                 <a href="{{ route('admin.users.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.users.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-users w-6"></i>
-                    <span>User</span>
+                    <span>User Management</span>
                 </a>
-                <a href="{{ route('admin.stock-transactions.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.stock-transactions.*') || request()->routeIs('admin.transactions.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
-                    <i class="fas fa-exchange-alt w-6"></i>
-                    <span>Transaksi Stok</span>
-                </a>
-                <a href="{{ route('admin.stock.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.stock.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
-                    <i class="fas fa-warehouse w-6"></i>
-                    <span>Laporan Stok</span>
-                </a>
-                <a href="{{ route('admin.reports.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.reports.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
-                    <i class="fas fa-chart-bar w-6"></i>
-                    <span>Laporan</span>
-                </a>
+
+                <!-- Manajemen Stok Menu with Dropdown -->
+                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.stock-transactions.*') || request()->routeIs('admin.transactions.*') || request()->routeIs('admin.stock.*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" class="flex items-center justify-between w-full px-6 py-3 hover:bg-blue-700 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-warehouse w-6"></i>
+                            <span>Manajemen Stok</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" x-collapse class="bg-blue-800">
+                        <a href="{{ route('admin.stock-transactions.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.stock-transactions.*') || request()->routeIs('admin.transactions.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-exchange-alt mr-2"></i> Transaksi Stok
+                        </a>
+                        <a href="{{ route('admin.stock.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.stock.*') && !request()->routeIs('admin.stock-transactions.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-chart-line mr-2"></i> Laporan Stok
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Laporan & Analisis Menu with Dropdown -->
+                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.reports.*') || request()->routeIs('admin.activity-logs.*') ? 'true' : 'false' }} }">
+                    <button @click="open = !open" class="flex items-center justify-between w-full px-6 py-3 hover:bg-blue-700 transition">
+                        <div class="flex items-center">
+                            <i class="fas fa-chart-bar w-6"></i>
+                            <span>Laporan & Analisis</span>
+                        </div>
+                        <i class="fas fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': open }"></i>
+                    </button>
+                    <div x-show="open" x-collapse class="bg-blue-800">
+                        <a href="{{ route('admin.reports.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.reports.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-file-chart-line mr-2"></i> Laporan Komprehensif
+                        </a>
+                        <a href="{{ route('admin.activity-logs.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.activity-logs.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-history mr-2"></i> Activity Logs
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Pengaturan -->
                 <a href="{{ route('admin.settings.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('admin.settings.*') ? 'bg-blue-700 border-l-4 border-white' : 'hover:bg-blue-700' }} transition">
                     <i class="fas fa-cog w-6"></i>
                     <span>Pengaturan</span>

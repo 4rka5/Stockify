@@ -7,6 +7,7 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\SupplierService;
 use App\Services\NotificationService;
+use App\Services\ActivityLogService;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,17 +19,20 @@ class ProductController extends Controller
     protected $categoryService;
     protected $supplierService;
     protected $notificationService;
+    protected $activityLogService;
 
     public function __construct(
         ProductService $productService,
         CategoryService $categoryService,
         SupplierService $supplierService,
-        NotificationService $notificationService
+        NotificationService $notificationService,
+        ActivityLogService $activityLogService
     ) {
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->supplierService = $supplierService;
         $this->notificationService = $notificationService;
+        $this->activityLogService = $activityLogService;
     }
 
     public function index(Request $request)
@@ -140,6 +144,13 @@ class ProductController extends Controller
                 Auth::user()->name . ' mengajukan produk baru: ' . $product->name . ' (' . $product->sku . ')',
                 'info',
                 route('admin.products.approval')
+            );
+
+            // Log activity
+            $this->activityLogService->logCreate(
+                'Product',
+                $product->id,
+                'Manajer mengajukan produk baru: ' . $product->name . ' (' . $product->sku . ')'
             );
 
             return redirect()->route('manajer.products.index')

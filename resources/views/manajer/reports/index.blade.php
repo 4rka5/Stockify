@@ -5,13 +5,28 @@
 @section('breadcrumb', 'Home / Laporan')
 
 @section('content')
-<div class="mb-6">
-    <h3 class="text-lg font-semibold text-gray-800">Laporan Stok Barang</h3>
-    <p class="text-sm text-gray-600">Ringkasan dan analisis data stok</p>
+<div class="mb-6 flex justify-between items-center no-print">
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800">Laporan Stok Barang</h3>
+        <p class="text-sm text-gray-600">Ringkasan dan analisis data stok</p>
+    </div>
+    <button onclick="window.print()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+        <i class="fas fa-print mr-2"></i>
+        Cetak Laporan
+    </button>
+</div>
+
+<!-- Print Header (only visible when printing) -->
+<div class="print-only mb-6 text-center" style="display: none;">
+    <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $appName ?? 'Stockify' }}</h2>
+    <h3 class="text-xl font-semibold text-gray-700 mb-1">Laporan Stok Barang</h3>
+    <p class="text-sm text-gray-600">Periode: {{ \Carbon\Carbon::parse($startDate)->format('d M Y') }} - {{ \Carbon\Carbon::parse($endDate)->format('d M Y') }}</p>
+    <p class="text-sm text-gray-600 mb-4">Dicetak pada: {{ now()->format('d M Y H:i') }}</p>
+    <hr class="my-4">
 </div>
 
 <!-- Quick Filter Buttons -->
-<div class="bg-white rounded-lg shadow-md p-4 mb-4">
+<div class="bg-white rounded-lg shadow-md p-4 mb-4 no-print">
     <div class="flex items-center gap-2 flex-wrap">
         <span class="text-sm font-medium text-gray-700">Filter Cepat:</span>
         <a href="{{ route('manajer.reports.index', ['filter' => 'today']) }}"
@@ -38,7 +53,7 @@
 </div>
 
 <!-- Date & Category Filter -->
-<div class="bg-white rounded-lg shadow-md p-4 mb-6">
+<div class="bg-white rounded-lg shadow-md p-4 mb-6 no-print">
     <form action="{{ route('manajer.reports.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
         <div>
             <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
@@ -277,4 +292,96 @@
         </div>
     @endif
 </div>
+
+<style>
+    @media print {
+        /* Hide non-printable elements */
+        .no-print,
+        nav,
+        aside,
+        .sidebar,
+        button,
+        .print-hidden {
+            display: none !important;
+        }
+
+        /* Adjust body and main container */
+        body {
+            margin: 0;
+            padding: 15px;
+            font-size: 12px;
+        }
+
+        /* Show print header */
+        .print-only {
+            display: block !important;
+        }
+
+        /* Optimize page layout */
+        .container,
+        .main-content {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Table styling for print */
+        table {
+            page-break-inside: auto;
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 11px;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+        }
+
+        tfoot {
+            display: table-footer-group;
+        }
+
+        /* Card styling */
+        .bg-white {
+            box-shadow: none !important;
+        }
+
+        /* Color adjustments for print */
+        .text-blue-600,
+        .text-green-600,
+        .text-yellow-600,
+        .text-red-600 {
+            color: #000 !important;
+        }
+
+        /* Badge styling */
+        .bg-green-100,
+        .bg-red-100,
+        .bg-yellow-100,
+        .bg-purple-100 {
+            border: 1px solid #000;
+            background: transparent !important;
+        }
+
+        /* Page breaks */
+        .page-break-after {
+            page-break-after: always;
+        }
+
+        .page-break-before {
+            page-break-before: always;
+        }
+
+        /* Avoid breaking inside stat cards */
+        .grid > div {
+            page-break-inside: avoid;
+        }
+    }
+</style>
 @endsection

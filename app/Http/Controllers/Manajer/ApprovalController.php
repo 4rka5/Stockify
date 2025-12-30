@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Manajer;
 
 use App\Http\Controllers\Controller;
 use App\Services\StockTransactionService;
+use App\Services\ActivityLogService;
 use App\Models\StockTransaction;
 use App\Models\StockOpname;
 use Illuminate\Http\Request;
@@ -13,10 +14,14 @@ use Illuminate\Support\Facades\DB;
 class ApprovalController extends Controller
 {
     protected $stockTransactionService;
+    protected $activityLogService;
 
-    public function __construct(StockTransactionService $stockTransactionService)
-    {
+    public function __construct(
+        StockTransactionService $stockTransactionService,
+        ActivityLogService $activityLogService
+    ) {
         $this->stockTransactionService = $stockTransactionService;
+        $this->activityLogService = $activityLogService;
     }
 
     public function index(Request $request)
@@ -109,7 +114,18 @@ class ApprovalController extends Controller
     public function approve($id)
     {
         try {
+            $transaction = StockTransaction::with('product')->findOrFail($id);
+
             $this->stockTransactionService->approveTransaction($id);
+
+            // Log activity
+            $this->activityLogService->logApprove(
+                'StockTransaction',
+                $id,
+                'Manajer menyetujui transaksi ' . ($transaction->type === 'in' ? 'barang masuk' : 'barang keluar') .
+                ' untuk produk ' . $transaction->product->name . ' sebanyak ' . $transaction->quantity . ' unit'
+            );
+
             return back()->with('success', 'Transaksi berhasil disetujui');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menyetujui transaksi: ' . $e->getMessage());
@@ -123,7 +139,19 @@ class ApprovalController extends Controller
         ]);
 
         try {
+            $transaction = StockTransaction::with('product')->findOrFail($id);
+
             $this->stockTransactionService->rejectTransaction($id, $validated['reason'] ?? null);
+
+            // Log activity
+            $this->activityLogService->logReject(
+                'StockTransaction',
+                $id,
+                'Manajer menolak transaksi ' . ($transaction->type === 'in' ? 'barang masuk' : 'barang keluar') .
+                ' untuk produk ' . $transaction->product->name . ' sebanyak ' . $transaction->quantity . ' unit',
+                $validated['reason']
+            );
+
             return back()->with('success', 'Transaksi berhasil ditolak');
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menolak transaksi: ' . $e->getMessage());
@@ -162,6 +190,15 @@ class ApprovalController extends Controller
             }
 
             DB::commit();
+
+            // Log activity
+            $this->activityLogService->logApprove(
+                'StockOpname',
+                $id,
+                'Manajer menyetujui stock opname untuk produk ' . $opname->product->name .
+                ' dengan selisih ' . ($opname->difference > 0 ? '+' : '') . $opname->difference . ' unit'
+            );
+
             return back()->with('success', 'Stock opname berhasil disetujui');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -176,7 +213,7 @@ class ApprovalController extends Controller
         ]);
 
         try {
-            $opname = StockOpname::findOrFail($id);
+            $opname = StockOpname::with('product')->findOrFail($id);
 
             if ($opname->status !== 'pending') {
                 return back()->with('error', 'Stock opname sudah diproses sebelumnya');
@@ -188,6 +225,14 @@ class ApprovalController extends Controller
                 'approved_at' => now(),
                 'notes' => ($opname->notes ? $opname->notes . ' | ' : '') . 'Ditolak: ' . ($validated['reason'] ?? 'Tidak ada alasan'),
             ]);
+
+            // Log activity
+            $this->activityLogService->logReject(
+                'StockOpname',
+                $id,
+                'Manajer menolak stock opname untuk produk ' . $opname->product->name,
+                $validated['reason']
+            );
 
             return back()->with('success', 'Stock opname berhasil ditolak');
         } catch (\Exception $e) {
