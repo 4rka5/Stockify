@@ -8,6 +8,8 @@ use App\Services\ProductService;
 use App\Services\CategoryService;
 use App\Services\NotificationService;
 use App\Services\ActivityLogService;
+use App\Repositories\StockTransactionRepository;
+use App\Repositories\ProductRepository;
 use App\Models\StockTransaction;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -21,49 +23,40 @@ class StockController extends Controller
     protected $categoryService;
     protected $notificationService;
     protected $activityLogService;
+    protected $stockTransactionRepository;
+    protected $productRepository;
 
     public function __construct(
         StockTransactionService $stockTransactionService,
         ProductService $productService,
         CategoryService $categoryService,
         NotificationService $notificationService,
-        ActivityLogService $activityLogService
+        ActivityLogService $activityLogService,
+        StockTransactionRepository $stockTransactionRepository,
+        ProductRepository $productRepository
     ) {
         $this->stockTransactionService = $stockTransactionService;
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->notificationService = $notificationService;
         $this->activityLogService = $activityLogService;
+        $this->stockTransactionRepository = $stockTransactionRepository;
+        $this->productRepository = $productRepository;
     }
 
     public function in()
     {
         // Get pending incoming transactions assigned to current user
-        $pendingTransactions = StockTransaction::with(['product', 'user', 'assignedStaff'])
-            ->where('type', 'in')
-            ->where('status', 'pending')
-            ->where('assigned_to', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $pendingTransactions = $this->stockTransactionRepository->getPendingByUserAndType(Auth::id(), 'in', 10);
 
         // Get all products for new transaction form (approved only)
-        $products = Product::with('category')->approved()->get()->sortByDesc(function ($product) {
+        $products = $this->productRepository->getApprovedProducts()->sortByDesc(function ($product) {
             return $product->current_stock;
         })->values();
 
         // Statistics
-        $confirmedToday = StockTransaction::where('type', 'in')
-            ->where('status', 'diterima')
-            ->where('assigned_to', Auth::id())
-            ->whereDate('created_at', Carbon::today())
-            ->count();
-
-        $totalThisMonth = StockTransaction::where('type', 'in')
-            ->where('status', 'diterima')
-            ->where('assigned_to', Auth::id())
-            ->whereYear('created_at', Carbon::now()->year)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->count();
+        $confirmedToday = $this->stockTransactionRepository->countByStatusAndUser('diterima', Auth::id(), 'in', true);
+        $totalThisMonth = $this->stockTransactionRepository->countByStatusAndUser('diterima', Auth::id(), 'in', false, true);
 
         return view('staff.stocks.in', compact('pendingTransactions', 'confirmedToday', 'totalThisMonth', 'products'));
     }
@@ -122,31 +115,16 @@ class StockController extends Controller
     public function out()
     {
         // Get pending outgoing transactions assigned to current user
-        $pendingTransactions = StockTransaction::with(['product', 'product.category', 'user', 'assignedStaff'])
-            ->where('type', 'out')
-            ->where('status', 'pending')
-            ->where('assigned_to', Auth::id())
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
+        $pendingTransactions = $this->stockTransactionRepository->getPendingByUserAndType(Auth::id(), 'out', 10);
 
         // Get all products for new transaction form (approved only)
-        $products = Product::with(['category', 'stockTransactions'])->approved()->get()->sortByDesc(function ($product) {
+        $products = $this->productRepository->getApprovedProducts()->sortByDesc(function ($product) {
             return $product->current_stock;
         })->values();
 
         // Statistics
-        $preparedToday = StockTransaction::where('type', 'out')
-            ->where('status', 'dikeluarkan')
-            ->where('assigned_to', Auth::id())
-            ->whereDate('created_at', Carbon::today())
-            ->count();
-
-        $totalThisMonth = StockTransaction::where('type', 'out')
-            ->where('status', 'dikeluarkan')
-            ->where('assigned_to', Auth::id())
-            ->whereYear('created_at', Carbon::now()->year)
-            ->whereMonth('created_at', Carbon::now()->month)
-            ->count();
+        $preparedToday = $this->stockTransactionRepository->countByStatusAndUser('dikeluarkan', Auth::id(), 'out', true);
+        $totalThisMonth = $this->stockTransactionRepository->countByStatusAndUser('dikeluarkan', Auth::id(), 'out', false, true);
 
         return view('staff.stocks.out', compact('pendingTransactions', 'preparedToday', 'totalThisMonth', 'products'));
     }
@@ -167,7 +145,7 @@ class StockController extends Controller
 
         try {
             // Check stock availability
-            $product = Product::with('stockTransactions')->findOrFail($validated['product_id']);
+            $product = $this->productRepository->findWithRelations($validated['product_id']);
 
             if ($product->current_stock < $validated['quantity']) {
                 return back()->with('error', 'Stok tidak mencukupi. Stok tersedia: ' . $product->current_stock . ' unit');

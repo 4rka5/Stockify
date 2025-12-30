@@ -8,6 +8,7 @@ use App\Services\CategoryService;
 use App\Services\SupplierService;
 use App\Services\NotificationService;
 use App\Services\ActivityLogService;
+use App\Repositories\ProductRepository;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Supplier;
@@ -22,19 +23,22 @@ class ProductController extends Controller
     protected $supplierService;
     protected $notificationService;
     protected $activityLogService;
+    protected $productRepository;
 
     public function __construct(
         ProductService $productService,
         CategoryService $categoryService,
         SupplierService $supplierService,
         NotificationService $notificationService,
-        ActivityLogService $activityLogService
+        ActivityLogService $activityLogService,
+        ProductRepository $productRepository
     ) {
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->supplierService = $supplierService;
         $this->notificationService = $notificationService;
         $this->activityLogService = $activityLogService;
+        $this->productRepository = $productRepository;
     }
 
     public function index(Request $request)
@@ -42,23 +46,10 @@ class ProductController extends Controller
         $keyword = $request->get('search');
         $status = $request->get('status', 'approved'); // Default show approved only
 
-        $query = Product::with(['category', 'supplier', 'creator']);
-
-        if ($keyword) {
-            $query->where(function($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%")
-                  ->orWhere('sku', 'like', "%{$keyword}%");
-            });
-        }
-
-        if ($status && $status !== 'all') {
-            $query->where('status', $status);
-        }
-
-        $products = $query->latest()->paginate(15);
+        $products = $this->productRepository->searchWithFilters($keyword, $status, 15);
 
         // Count pending products
-        $pendingCount = Product::where('status', 'pending')->count();
+        $pendingCount = $this->productRepository->countByStatus('pending');
 
         return view('admin.products.index', compact('products', 'pendingCount'));
     }
@@ -68,25 +59,12 @@ class ProductController extends Controller
         $keyword = $request->get('search');
         $status = $request->get('status', 'pending'); // Default show pending
 
-        $query = Product::with(['category', 'supplier', 'creator', 'approver', 'stockTransactions']);
-
-        if ($keyword) {
-            $query->where(function($q) use ($keyword) {
-                $q->where('name', 'like', "%{$keyword}%")
-                  ->orWhere('sku', 'like', "%{$keyword}%");
-            });
-        }
-
-        if ($status && $status !== '') {
-            $query->where('status', $status);
-        }
-
-        $products = $query->latest()->paginate(15);
+        $products = $this->productRepository->searchApprovalProducts($keyword, $status, 15);
 
         // Count by status
-        $pendingCount = Product::where('status', 'pending')->count();
-        $approvedCount = Product::where('status', 'approved')->count();
-        $rejectedCount = Product::where('status', 'rejected')->count();
+        $pendingCount = $this->productRepository->countByStatus('pending');
+        $approvedCount = $this->productRepository->countByStatus('approved');
+        $rejectedCount = $this->productRepository->countByStatus('rejected');
 
         return view('admin.products.approval', compact('products', 'pendingCount', 'approvedCount', 'rejectedCount'));
     }
@@ -180,13 +158,13 @@ class ProductController extends Controller
     public function approve($id)
     {
         try {
-            $product = Product::findOrFail($id);
+            $product = $this->productRepository->findOrFail($id);
 
             if ($product->status !== 'pending') {
                 return back()->with('error', 'Produk sudah diproses sebelumnya');
             }
 
-            $product->update([
+            $this->productRepository->update($id, [
                 'status' => 'approved',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
@@ -238,13 +216,13 @@ class ProductController extends Controller
         ]);
 
         try {
-            $product = Product::findOrFail($id);
+            $product = $this->productRepository->findOrFail($id);
 
             if ($product->status !== 'pending') {
                 return back()->with('error', 'Produk sudah diproses sebelumnya');
             }
 
-            $product->update([
+            $this->productRepository->update($id, [
                 'status' => 'rejected',
                 'approved_by' => Auth::id(),
                 'approved_at' => now(),
@@ -281,7 +259,7 @@ class ProductController extends Controller
     {
         $this->activityLogService->log('export', 'Mengekspor data produk ke Excel');
 
-        $products = Product::with(['category', 'supplier'])->get();
+        $products = $this->productRepository->getAllWithRelations();
 
         $filename = 'products_' . date('Y-m-d_His') . '.csv';
 

@@ -77,4 +77,50 @@ class ProductRepository extends BaseRepository
             })
             ->take($limit);
     }
+
+    public function searchWithFilters($keyword = null, $status = 'approved', $perPage = 15)
+    {
+        $query = $this->model->with(['category', 'supplier', 'creator']);
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhere('sku', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        if ($status && $status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        return $query->latest()->paginate($perPage);
+    }
+
+    public function searchApprovalProducts($keyword = null, $status = 'pending', $perPage = 15)
+    {
+        $query = $this->model->with(['category', 'supplier', 'creator', 'approver', 'stockTransactions']);
+
+        if ($keyword) {
+            $query->where(function ($q) use ($keyword) {
+                $q->where('name', 'like', '%' . $keyword . '%')
+                    ->orWhere('sku', 'like', '%' . $keyword . '%');
+            });
+        }
+
+        if ($status && $status !== '') {
+            $query->where('status', $status);
+        }
+
+        return $query->latest()->paginate($perPage);
+    }
+
+    public function countByStatus($status)
+    {
+        return $this->model->where('status', $status)->count();
+    }
+
+    public function getApprovedProducts()
+    {
+        return $this->model->where('status', 'approved')->get();
+    }
 }

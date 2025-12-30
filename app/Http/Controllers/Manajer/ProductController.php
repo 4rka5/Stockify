@@ -8,6 +8,8 @@ use App\Services\CategoryService;
 use App\Services\SupplierService;
 use App\Services\NotificationService;
 use App\Services\ActivityLogService;
+use App\Repositories\ProductRepository;
+use App\Repositories\UserRepository;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -20,39 +22,32 @@ class ProductController extends Controller
     protected $supplierService;
     protected $notificationService;
     protected $activityLogService;
+    protected $productRepository;
+    protected $userRepository;
 
     public function __construct(
         ProductService $productService,
         CategoryService $categoryService,
         SupplierService $supplierService,
         NotificationService $notificationService,
-        ActivityLogService $activityLogService
+        ActivityLogService $activityLogService,
+        ProductRepository $productRepository,
+        UserRepository $userRepository
     ) {
         $this->productService = $productService;
         $this->categoryService = $categoryService;
         $this->supplierService = $supplierService;
         $this->notificationService = $notificationService;
         $this->activityLogService = $activityLogService;
+        $this->productRepository = $productRepository;
+        $this->userRepository = $userRepository;
     }
 
     public function index(Request $request)
     {
         $keyword = $request->get('search');
 
-        if ($keyword) {
-            $products = Product::with(['category', 'supplier'])
-                ->approved() // Only show approved products
-                ->where(function($q) use ($keyword) {
-                    $q->where('name', 'like', "%{$keyword}%")
-                      ->orWhere('sku', 'like', "%{$keyword}%");
-                })
-                ->paginate(15);
-        } else {
-            $products = Product::with(['category', 'supplier'])
-                ->approved() // Only show approved products
-                ->latest()
-                ->paginate(15);
-        }
+        $products = $this->productRepository->searchWithFilters($keyword, 'approved', 15);
 
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
@@ -64,7 +59,7 @@ class ProductController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
-        $staffUsers = \App\Models\User::where('role', 'staff gudang')->get();
+        $staffUsers = $this->userRepository->getByRole('staff gudang');
 
         return view('manajer.products.create', compact('categories', 'suppliers', 'staffUsers'));
     }

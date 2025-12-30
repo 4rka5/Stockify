@@ -98,4 +98,35 @@ class StockTransactionRepository extends BaseRepository
             ->limit($limit)
             ->get();
     }
+
+    public function getPendingByUserAndType($userId, $type, $perPage = 10)
+    {
+        return $this->model->with(['product', 'user', 'assignedStaff'])
+            ->where('type', $type)
+            ->where('status', 'pending')
+            ->where('assigned_to', $userId)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+    }
+
+    public function countByStatusAndUser($status, $userId, $type = null, $today = false, $thisMonth = false)
+    {
+        $query = $this->model->where('status', $status)
+            ->where('assigned_to', $userId);
+
+        if ($type) {
+            $query->where('type', $type);
+        }
+
+        if ($today) {
+            $query->whereDate('created_at', today());
+        }
+
+        if ($thisMonth) {
+            $query->whereYear('created_at', now()->year)
+                ->whereMonth('created_at', now()->month);
+        }
+
+        return $query->count();
+    }
 }
