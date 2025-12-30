@@ -31,7 +31,12 @@ class StockController extends Controller
 
     public function index()
     {
-        $products = $this->productService->getAllProducts()->where('status', 'approved');
+        $products = $this->productService->getAllProducts()
+            ->where('status', 'approved')
+            ->sortByDesc(function ($product) {
+                return $product->current_stock;
+            })
+            ->values(); // Reset array keys after sorting
         $staffMembers = User::where('role', 'staff gudang')->get();
         return view('manajer.stocks.index', compact('products', 'staffMembers'));
     }
@@ -117,11 +122,23 @@ class StockController extends Controller
         try {
             $staffId = $validated['assigned_to'];
             $staff = User::findOrFail($staffId);
-            $productCount = count($validated['product_ids']);
+            $productCount = 0;
+            $skippedProducts = [];
 
             // Create stock opname tasks for each product
             foreach ($validated['product_ids'] as $productId) {
                 $product = Product::findOrFail($productId);
+
+                // Check if this product already has an assigned task for this staff
+                $existingTask = StockOpname::where('product_id', $productId)
+                    ->where('user_id', $staffId)
+                    ->where('status', 'assigned')
+                    ->first();
+
+                if ($existingTask) {
+                    $skippedProducts[] = $product->name;
+                    continue; // Skip this product
+                }
 
                 StockOpname::create([
                     'product_id' => $productId,
@@ -135,17 +152,41 @@ class StockController extends Controller
                     'checked_at' => null, // Will be filled when staff completes
                     'status' => 'assigned', // New status for assigned tasks
                 ]);
+
+                $productCount++;
             }
 
             // Send notification to staff
-            $this->notificationService->createNotification(
-                $staffId,
-                'Tugas Stock Opname Baru',
-                "Anda ditugaskan untuk melakukan pengecekan stok fisik pada {$productCount} produk oleh Manajer " . auth()->user()->name,
-                'staff.stock-opname.index'
-            );
+            if ($productCount > 0) {
+                $this->notificationService->create(
+                    $staffId,
+                    'Tugas Stock Opname Baru',
+                    "Anda ditugaskan untuk melakukan pengecekan stok fisik pada {$productCount} produk oleh Manajer " . auth()->user()->name,
+                    'info',
+                    'staff.stock-opname.index'
+                );
+            }
 
-            return back()->with('success', "Berhasil menugaskan {$productCount} produk untuk dicek oleh {$staff->name}");
+            // Prepare response message
+            $message = '';
+            if ($productCount > 0) {
+                $message = "Berhasil menugaskan {$productCount} produk untuk dicek oleh {$staff->name}";
+            }
+
+            if (!empty($skippedProducts)) {
+                $skippedList = implode(', ', $skippedProducts);
+                $skippedMessage = count($skippedProducts) > 1
+                    ? "Produk berikut dilewati karena sudah memiliki tugas yang belum selesai: {$skippedList}"
+                    : "Produk {$skippedList} dilewati karena sudah memiliki tugas yang belum selesai";
+
+                if ($productCount > 0) {
+                    $message .= '. ' . $skippedMessage;
+                } else {
+                    return back()->with('info', $skippedMessage);
+                }
+            }
+
+            return back()->with('success', $message);
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal menugaskan stock opname: ' . $e->getMessage());
         }

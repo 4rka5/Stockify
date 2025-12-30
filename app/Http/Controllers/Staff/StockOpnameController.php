@@ -25,7 +25,7 @@ class StockOpnameController extends Controller
         $search = $request->get('search');
         $category = $request->get('category');
 
-        $query = Product::with(['category', 'stockTransactions']);
+        $query = Product::with(['category', 'stockTransactions'])->where('status', 'approved');
 
         if ($search) {
             $query->where(function($q) use ($search) {
@@ -38,7 +38,24 @@ class StockOpnameController extends Controller
             $query->where('category_id', $category);
         }
 
-        $products = $query->orderBy('name')->paginate(15);
+        // Get all products and sort by current_stock descending
+        $allProducts = $query->get()->sortByDesc(function ($product) {
+            return $product->current_stock;
+        });
+
+        // Manual pagination
+        $perPage = 15;
+        $currentPage = $request->get('page', 1);
+        $offset = ($currentPage - 1) * $perPage;
+
+        $products = new \Illuminate\Pagination\LengthAwarePaginator(
+            $allProducts->slice($offset, $perPage)->values(),
+            $allProducts->count(),
+            $perPage,
+            $currentPage,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         $categories = \App\Models\Category::orderBy('name')->get();
 
         // Get recent opnames by this staff
@@ -119,12 +136,13 @@ class StockOpnameController extends Controller
 
             if ($createdCount > 0) {
                 // Kirim notifikasi ke semua manajer
-                $managers = User::where('role', 'manajer')->get();
+                $managers = User::where('role', 'manajer gudang')->get();
                 foreach ($managers as $manager) {
-                    $this->notificationService->createNotification(
+                    $this->notificationService->create(
                         $manager->id,
                         'Stock Opname Baru',
                         "Staff " . auth()->user()->name . " telah mengirim {$createdCount} produk hasil stock opname untuk disetujui.",
+                        'info',
                         'manajer.approval.index'
                     );
                 }

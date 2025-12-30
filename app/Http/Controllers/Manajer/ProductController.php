@@ -82,6 +82,9 @@ class ProductController extends Controller
             'assigned_staff_id' => 'nullable|required_if:create_task,1|exists:users,id',
             'task_quantity' => 'nullable|required_if:create_task,1|integer|min:1',
             'task_notes' => 'nullable|string|max:500',
+            'attributes' => 'nullable|array',
+            'attributes.*.name' => 'nullable|string|max:100',
+            'attributes.*.value' => 'nullable|string|max:255',
         ]);
 
         try {
@@ -103,6 +106,18 @@ class ProductController extends Controller
             $validated['created_by'] = Auth::id();
 
             $product = Product::create($validated);
+
+            // Save product attributes
+            if ($request->has('attributes') && is_array($request->attributes)) {
+                foreach ($request->attributes as $attribute) {
+                    if (!empty($attribute['name']) && !empty($attribute['value'])) {
+                        $product->attributes()->create([
+                            'name' => $attribute['name'],
+                            'value' => $attribute['value'],
+                        ]);
+                    }
+                }
+            }
 
             // Create pending task if requested
             if ($request->create_task && $request->task_type && $request->assigned_staff_id && $request->task_quantity) {
@@ -173,6 +188,9 @@ class ProductController extends Controller
             return redirect()->route('manajer.products.index')
                 ->with('error', 'Produk tidak ditemukan');
         }
+
+        // Load attributes relationship
+        $product->load('attributes');
 
         return view('manajer.products.show', compact('product'));
     }

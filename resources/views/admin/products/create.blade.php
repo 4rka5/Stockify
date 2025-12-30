@@ -208,6 +208,29 @@
             @enderror
         </div>
 
+        <!-- Product Attributes -->
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-tags mr-1"></i> Atribut Produk (Opsional)
+            </label>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-3">
+                <p class="text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Tambahkan atribut spesifik untuk produk ini seperti ukuran, warna, berat, atau spesifikasi lainnya.
+                </p>
+            </div>
+            <div id="attributes-container" class="space-y-2">
+                <!-- Attribute rows will be added here -->
+            </div>
+            <button type="button" onclick="addAttributeRow()" class="mt-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition text-sm">
+                <i class="fas fa-plus mr-1"></i> Tambah Atribut
+            </button>
+            <p class="text-xs text-gray-500 mt-2">
+                <i class="fas fa-lightbulb mr-1"></i>
+                <strong>Contoh atribut:</strong> Ukuran - XL, Warna - Hitam, Berat - 500g, Material - Katun
+            </p>
+        </div>
+
         <!-- Submit Buttons -->
         <div class="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200 mt-6">
             <a href="{{ route('admin.products.index') }}" class="px-6 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition">
@@ -244,6 +267,31 @@
 
 @push('scripts')
 <script>
+let attributeIndex = 0;
+
+function addAttributeRow() {
+    const container = document.getElementById('attributes-container');
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-start';
+    row.innerHTML = `
+        <input type="text" name="attributes[${attributeIndex}][name]" placeholder="Nama Atribut (contoh: Ukuran)"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+        <input type="text" name="attributes[${attributeIndex}][value]" placeholder="Nilai (contoh: XL)"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+        <button type="button" onclick="this.parentElement.remove()"
+                class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition text-sm">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(row);
+    attributeIndex++;
+}
+
+// Add one attribute row by default
+document.addEventListener('DOMContentLoaded', function() {
+    addAttributeRow();
+});
+
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
     const img = preview.querySelector('img');

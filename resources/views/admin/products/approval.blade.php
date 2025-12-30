@@ -112,10 +112,10 @@
                                     @if($product->image)
                                         <img src="{{ asset('storage/' . $product->image) }}"
                                              alt="{{ $product->name }}"
-                                             class="w-12 h-12 rounded-lg object-cover mr-3">
+                                             class="w-20 h-20 rounded-lg object-cover mr-3">
                                     @else
-                                        <div class="w-12 h-12 rounded-lg bg-gray-200 flex items-center justify-center mr-3">
-                                            <i class="fas fa-image text-gray-400"></i>
+                                        <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center mr-3">
+                                            <i class="fas fa-image text-gray-400 text-2xl"></i>
                                         </div>
                                     @endif
                                     <div>
@@ -136,21 +136,24 @@
                             </td>
                             <td class="px-6 py-4">
                                 <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
-                                    {{ $product->category->name }}
+                                    {{ $product->category?->name ?? '-' }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $product->supplier->name }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                Rp {{ number_format($product->price, 0, ',', '.') }}
+                                {{ $product->supplier?->name ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $product->creator->name }}</div>
-                                <div class="text-xs text-gray-500">{{ $product->creator->role }}</div>
+                                <div class="text-xs text-gray-500">Beli</div>
+                                <div class="text-sm font-medium text-gray-900">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</div>
+                                <div class="text-xs text-gray-500 mt-1">Jual</div>
+                                <div class="text-sm font-medium text-green-600">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm text-gray-900">{{ $product->creator?->name ?? '-' }}</div>
+                                <div class="text-xs text-gray-500">{{ $product->creator?->role ?? '-' }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $product->created_at->format('d/m/Y H:i') }}
+                                {{ $product->created_at?->format('d/m/Y H:i') ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($product->status === 'pending')

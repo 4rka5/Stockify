@@ -215,6 +215,40 @@
             @enderror
         </div>
 
+        <!-- Product Attributes -->
+        <div class="mt-6">
+            <label class="block text-sm font-medium text-gray-700 mb-2">
+                <i class="fas fa-tags mr-1"></i> Atribut Produk (Opsional)
+            </label>
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-3">
+                <p class="text-sm text-blue-700">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Kelola atribut spesifik produk seperti ukuran, warna, berat, atau spesifikasi lainnya.
+                </p>
+            </div>
+            <div id="attributes-container" class="space-y-2">
+                @foreach($product->attributes as $index => $attribute)
+                <div class="flex gap-2 items-start">
+                    <input type="text" name="attributes[{{ $index }}][name]" value="{{ old('attributes.'.$index.'.name', $attribute->name) }}" placeholder="Nama Atribut (contoh: Ukuran)"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    <input type="text" name="attributes[{{ $index }}][value]" value="{{ old('attributes.'.$index.'.value', $attribute->value) }}" placeholder="Nilai (contoh: XL)"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    <button type="button" onclick="this.parentElement.remove()"
+                            class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition text-sm">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+                @endforeach
+            </div>
+            <button type="button" onclick="addAttributeRow()" class="mt-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg transition text-sm">
+                <i class="fas fa-plus mr-1"></i> Tambah Atribut
+            </button>
+            <p class="text-xs text-gray-500 mt-2">
+                <i class="fas fa-lightbulb mr-1"></i>
+                <strong>Contoh atribut:</strong> Ukuran - XL, Warna - Hitam, Berat - 500g, Material - Katun
+            </p>
+        </div>
+
         <!-- Product Info -->
         <div class="mt-6 p-4 bg-gray-50 rounded-lg">
             <h4 class="text-sm font-medium text-gray-700 mb-3">Informasi Stok</h4>
@@ -278,6 +312,26 @@
 
 @push('scripts')
 <script>
+let attributeIndex = {{ $product->attributes->count() }};
+
+function addAttributeRow() {
+    const container = document.getElementById('attributes-container');
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-start';
+    row.innerHTML = `
+        <input type="text" name="attributes[${attributeIndex}][name]" placeholder="Nama Atribut (contoh: Ukuran)"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+        <input type="text" name="attributes[${attributeIndex}][value]" placeholder="Nilai (contoh: XL)"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+        <button type="button" onclick="this.parentElement.remove()"
+                class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition text-sm">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(row);
+    attributeIndex++;
+}
+
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');
     const img = preview.querySelector('img');

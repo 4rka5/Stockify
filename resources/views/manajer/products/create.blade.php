@@ -174,10 +174,54 @@
                         <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
+
+                <!-- Product Attributes -->
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-tags mr-1"></i> Atribut Produk (Opsional)
+                    </label>
+                    <div id="attributes-container" class="space-y-2">
+                        <!-- Attribute rows will be added here -->
+                    </div>
+                    <button type="button" onclick="addAttributeRow()" class="mt-2 px-4 py-2 bg-teal-100 hover:bg-teal-200 text-teal-700 rounded-lg transition text-sm">
+                        <i class="fas fa-plus mr-1"></i> Tambah Atribut
+                    </button>
+                    <p class="text-xs text-gray-500 mt-1">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Contoh: Warna - Merah, Ukuran - XL, Bahan - Katun
+                    </p>
+                </div>
             </div>
 
             <!-- Divider -->
             <div class="border-t border-gray-200 my-6"></div>
+
+<script>
+let attributeIndex = 0;
+
+function addAttributeRow() {
+    const container = document.getElementById('attributes-container');
+    const row = document.createElement('div');
+    row.className = 'flex gap-2 items-start';
+    row.innerHTML = `
+        <input type="text" name="attributes[${attributeIndex}][name]" placeholder="Nama (contoh: Warna)"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm">
+        <input type="text" name="attributes[${attributeIndex}][value]" placeholder="Nilai (contoh: Merah)"
+               class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm">
+        <button type="button" onclick="this.parentElement.remove()"
+                class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition text-sm">
+            <i class="fas fa-trash"></i>
+        </button>
+    `;
+    container.appendChild(row);
+    attributeIndex++;
+}
+
+// Add one attribute row by default
+document.addEventListener('DOMContentLoaded', function() {
+    addAttributeRow();
+});
+</script>
 
             <!-- Task Assignment Section (Optional) -->
             <div class="mb-6">
@@ -243,9 +287,9 @@
                             <label for="task_quantity" class="block text-sm font-medium text-gray-700 mb-2">
                                 Jumlah <span class="text-red-500">*</span>
                             </label>
-                            <input type="number" name="task_quantity" id="task_quantity" value="{{ old('task_quantity', 0) }}" min="1"
+                            <input type="number" name="task_quantity" id="task_quantity" value="{{ old('task_quantity', 1) }}"
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent"
-                                   placeholder="0">
+                                   placeholder="1">
                             @error('task_quantity')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -288,19 +332,28 @@
 function toggleTaskSection() {
     const checkbox = document.getElementById('toggle_task');
     const section = document.getElementById('task_section');
+    const taskType = document.getElementById('task_type');
+    const staffId = document.getElementById('assigned_staff_id');
+    const quantity = document.getElementById('task_quantity');
 
     if (checkbox.checked) {
         section.classList.remove('hidden');
-        // Make fields required
-        document.getElementById('task_type').setAttribute('required', 'required');
-        document.getElementById('assigned_staff_id').setAttribute('required', 'required');
-        document.getElementById('task_quantity').setAttribute('required', 'required');
+        // Make fields required with validation
+        taskType.setAttribute('required', 'required');
+        staffId.setAttribute('required', 'required');
+        quantity.setAttribute('required', 'required');
+        quantity.setAttribute('min', '1');
     } else {
         section.classList.add('hidden');
-        // Remove required
-        document.getElementById('task_type').removeAttribute('required');
-        document.getElementById('assigned_staff_id').removeAttribute('required');
-        document.getElementById('task_quantity').removeAttribute('required');
+        // Remove all validation when hidden
+        taskType.removeAttribute('required');
+        staffId.removeAttribute('required');
+        quantity.removeAttribute('required');
+        quantity.removeAttribute('min');
+        // Clear values to prevent submission
+        taskType.value = '';
+        staffId.value = '';
+        quantity.value = '';
     }
 }
 

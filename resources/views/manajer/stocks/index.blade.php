@@ -10,6 +10,25 @@
     <p class="text-sm text-gray-600">Pantau dan kelola stok produk dalam sistem</p>
 </div>
 
+<!-- Success/Error Messages -->
+@if(session('success'))
+<div class="mb-6 bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+    <div class="flex items-center">
+        <i class="fas fa-check-circle text-green-500 text-xl mr-3"></i>
+        <p class="text-green-800 font-medium">{{ session('success') }}</p>
+    </div>
+</div>
+@endif
+
+@if(session('error'))
+<div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+    <div class="flex items-center">
+        <i class="fas fa-exclamation-circle text-red-500 text-xl mr-3"></i>
+        <p class="text-red-800 font-medium">{{ session('error') }}</p>
+    </div>
+</div>
+@endif
+
 <!-- Stats Overview -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
     <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-teal-500">
@@ -82,7 +101,7 @@
                 <select id="product_id_in" name="product_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent">
                     <option value="">-- Pilih Produk --</option>
                     @foreach($products as $product)
-                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->sku }})</option>
+                        <option value="{{ $product->id }}">{{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->current_stock }}</option>
                     @endforeach
                 </select>
             </div>
@@ -127,7 +146,7 @@
                     <option value="">-- Pilih Produk --</option>
                     @foreach($products as $product)
                         <option value="{{ $product->id }}" data-stock="{{ $product->current_stock }}">
-                            {{ $product->name }} (Stok: {{ $product->current_stock }})
+                            {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->current_stock }}
                         </option>
                     @endforeach
                 </select>

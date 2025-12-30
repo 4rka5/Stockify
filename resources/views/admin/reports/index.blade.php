@@ -10,36 +10,35 @@
     <p class="text-sm text-gray-600">Ringkasan dan analisis data sistem inventory</p>
 </div>
 
-<!-- Quick Filter Buttons -->
-<div class="bg-white rounded-lg shadow-md p-4 mb-4">
-    <div class="flex items-center gap-2 flex-wrap">
-        <span class="text-sm font-medium text-gray-700">Filter Cepat:</span>
-        <a href="{{ route('admin.reports.index', ['filter' => 'today']) }}"
-           class="quick-filter px-4 py-2 {{ request('filter') == 'today' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
-            <i class="fas fa-calendar-day mr-1"></i>
-            Hari Ini
-        </a>
-        <a href="{{ route('admin.reports.index', ['filter' => 'week']) }}"
-           class="quick-filter px-4 py-2 {{ request('filter') == 'week' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
-            <i class="fas fa-calendar-week mr-1"></i>
-            Minggu Ini
-        </a>
-        <a href="{{ route('admin.reports.index', ['filter' => 'month']) }}"
-           class="quick-filter px-4 py-2 {{ request('filter') == 'month' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
-            <i class="fas fa-calendar-alt mr-1"></i>
-            Bulan Ini
-        </a>
-        <a href="{{ route('admin.reports.index', ['filter' => 'year']) }}"
-           class="quick-filter px-4 py-2 {{ request('filter') == 'year' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200' }} rounded-lg transition text-sm">
-            <i class="fas fa-calendar mr-1"></i>
-            Tahun Ini
-        </a>
-    </div>
-</div>
-
 <!-- Date Filter -->
 <div class="bg-white rounded-lg shadow-md p-4 mb-6">
-    <form action="{{ route('admin.reports.index') }}" method="GET" class="flex flex-wrap items-end gap-4" id="dateFilterForm">
+    <!-- Quick Filter Buttons -->
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-700 mb-2">
+            <i class="fas fa-bolt mr-1"></i> Filter Cepat
+        </label>
+        <div class="flex flex-wrap gap-2">
+            <a href="{{ route('admin.reports.index', ['filter' => 'today']) }}"
+               class="px-4 py-2 {{ request('filter') == 'today' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} rounded-lg transition">
+                <i class="fas fa-calendar-day mr-1"></i> Hari Ini
+            </a>
+            <a href="{{ route('admin.reports.index', ['filter' => 'week']) }}"
+               class="px-4 py-2 {{ request('filter') == 'week' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} rounded-lg transition">
+                <i class="fas fa-calendar-week mr-1"></i> Minggu Ini
+            </a>
+            <a href="{{ route('admin.reports.index', ['filter' => 'month']) }}"
+               class="px-4 py-2 {{ request('filter') == 'month' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} rounded-lg transition">
+                <i class="fas fa-calendar-alt mr-1"></i> Bulan Ini
+            </a>
+            <a href="{{ route('admin.reports.index', ['filter' => 'year']) }}"
+               class="px-4 py-2 {{ request('filter') == 'year' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300' }} rounded-lg transition">
+                <i class="fas fa-calendar mr-1"></i> Tahun Ini
+            </a>
+        </div>
+    </div>
+
+    <!-- Manual Date Filter -->
+    <form action="{{ route('admin.reports.index') }}" method="GET" class="flex flex-wrap items-end gap-4">
         <div>
             <label for="start_date" class="block text-sm font-medium text-gray-700 mb-2">
                 <i class="fas fa-calendar mr-1"></i> Tanggal Mulai
@@ -466,7 +465,25 @@
         <i class="fas fa-file-excel mr-2"></i>
         Export Laporan Transaksi
     </a>
+    <button onclick="exportAllReports()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition">
+        <i class="fas fa-download mr-2"></i>
+        Export Semua Laporan
+    </button>
 </div>
+
+<script>
+function exportAllReports() {
+    if (confirm('Export semua laporan (Stok & Transaksi)?')) {
+        // Export Stok
+        window.open('{{ route('admin.reports.export.stock') }}', '_blank');
+
+        // Delay sedikit sebelum export transaksi
+        setTimeout(() => {
+            window.open('{{ route('admin.reports.export.transactions') }}?start_date={{ $startDate }}&end_date={{ $endDate }}', '_blank');
+        }, 500);
+    }
+}
+</script>
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>

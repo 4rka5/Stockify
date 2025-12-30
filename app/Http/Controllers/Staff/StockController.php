@@ -43,7 +43,9 @@ class StockController extends Controller
             ->paginate(10);
 
         // Get all products for new transaction form (approved only)
-        $products = Product::with('category')->approved()->orderBy('name')->get();
+        $products = Product::with('category')->approved()->get()->sortByDesc(function ($product) {
+            return $product->current_stock;
+        })->values();
 
         // Statistics
         $confirmedToday = StockTransaction::where('type', 'in')
@@ -117,7 +119,9 @@ class StockController extends Controller
             ->paginate(10);
 
         // Get all products for new transaction form (approved only)
-        $products = Product::with(['category', 'stockTransactions'])->approved()->orderBy('name')->get();
+        $products = Product::with(['category', 'stockTransactions'])->approved()->get()->sortByDesc(function ($product) {
+            return $product->current_stock;
+        })->values();
 
         // Statistics
         $preparedToday = StockTransaction::where('type', 'out')
@@ -189,7 +193,7 @@ class StockController extends Controller
     public function check(Request $request)
     {
         // Build query
-        $query = Product::with('category', 'stockTransactions');
+        $query = Product::with('category', 'stockTransactions')->where('status', 'approved');
 
         // Search filter
         if ($request->filled('search')) {
@@ -205,8 +209,20 @@ class StockController extends Controller
             $query->where('category_id', $request->category);
         }
 
-        // Get all products (will filter by stock status after calculation)
-        $allProducts = $query->orderBy('name')->get();
+        // Get all products and sort by current_stock descending, then by status (safe > low > out)
+        $allProducts = $query->get()->sort(function ($a, $b) {
+            // First, compare by stock quantity (descending)
+            if ($a->current_stock != $b->current_stock) {
+                return $b->current_stock - $a->current_stock;
+            }
+
+            // If stock is the same, prioritize by status
+            // Safe (above minimum) = 0, Low (at or below minimum but > 0) = 1, Out (0 or below) = 2
+            $statusA = $a->current_stock > $a->minimum_stock ? 0 : ($a->current_stock > 0 ? 1 : 2);
+            $statusB = $b->current_stock > $b->minimum_stock ? 0 : ($b->current_stock > 0 ? 1 : 2);
+
+            return $statusA - $statusB;
+        })->values();
 
         // Filter by stock status if needed
         if ($request->filled('stock_status')) {

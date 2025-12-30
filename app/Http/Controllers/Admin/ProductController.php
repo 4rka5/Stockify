@@ -103,6 +103,9 @@ class ProductController extends Controller
             'selling_price' => 'required|numeric|min:0',
             'minimum_stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attributes' => 'nullable|array',
+            'attributes.*.name' => 'nullable|string|max:100',
+            'attributes.*.value' => 'nullable|string|max:255',
         ]);
 
         try {
@@ -117,12 +120,14 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = $this->productService->getProductById($id);
+        $product->load('attributes');
         return view('admin.products.show', compact('product'));
     }
 
     public function edit($id)
     {
         $product = $this->productService->getProductById($id);
+        $product->load('attributes');
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
         return view('admin.products.edit', compact('product', 'categories', 'suppliers'));
@@ -140,6 +145,9 @@ class ProductController extends Controller
             'selling_price' => 'required|numeric|min:0',
             'minimum_stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'attributes' => 'nullable|array',
+            'attributes.*.name' => 'nullable|string|max:100',
+            'attributes.*.value' => 'nullable|string|max:255',
         ]);
 
         try {

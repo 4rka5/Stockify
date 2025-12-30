@@ -117,6 +117,25 @@
         </div>
         @endif
 
+        <!-- Product Attributes -->
+        @if($product->attributes->count() > 0)
+        <div class="bg-white rounded-lg shadow-md p-6">
+            <h4 class="text-lg font-semibold text-gray-800 mb-3">
+                <i class="fas fa-tags text-blue-500 mr-2"></i>Atribut Produk
+            </h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                @foreach($product->attributes as $attribute)
+                <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+                    <div class="flex-1">
+                        <span class="text-sm font-medium text-gray-600">{{ $attribute->name }}:</span>
+                        <span class="text-sm font-semibold text-gray-800 ml-2">{{ $attribute->value }}</span>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+
         <!-- Stock Statistics -->
         <div class="bg-white rounded-lg shadow-md p-6">
             <h4 class="text-lg font-semibold text-gray-800 mb-4">Statistik Stok</h4>

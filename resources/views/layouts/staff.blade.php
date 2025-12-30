@@ -59,13 +59,13 @@
                     <i class="fas fa-history w-6"></i>
                     <span>Riwayat</span>
                 </a>
-                <a href="{{ route('staff.notifications.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.notifications.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
+                {{-- <a href="{{ route('staff.notifications.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.notifications.*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
                     <i class="fas fa-bell w-6"></i>
                     <span>Notifikasi</span>
                     @if(isset($unreadNotifications) && $unreadNotifications > 0)
                         <span class="ml-auto bg-red-500 text-white text-xs rounded-full px-2 py-1">{{ $unreadNotifications }}</span>
                     @endif
-                </a>
+                </a> --}}
                 <a href="{{ route('staff.profile') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('staff.profile*') ? 'bg-purple-700 border-l-4 border-white' : 'hover:bg-purple-700' }} transition">
                     <i class="fas fa-user-circle w-6"></i>
                     <span>Profil Saya</span>

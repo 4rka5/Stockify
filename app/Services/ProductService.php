@@ -46,7 +46,23 @@ class ProductService
                 $data['sku'] = $this->generateSKU();
             }
 
+            // Extract attributes if present
+            $attributes = $data['attributes'] ?? [];
+            unset($data['attributes']);
+
             $product = $this->productRepository->create($data);
+
+            // Save product attributes
+            if (!empty($attributes) && is_array($attributes)) {
+                foreach ($attributes as $attribute) {
+                    if (!empty($attribute['name']) && !empty($attribute['value'])) {
+                        $product->attributes()->create([
+                            'name' => $attribute['name'],
+                            'value' => $attribute['value'],
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
             return $product;
@@ -72,7 +88,29 @@ class ProductService
                 $data['image'] = $this->uploadImage($data['image']);
             }
 
+            // Extract attributes if present
+            $attributes = $data['attributes'] ?? [];
+            unset($data['attributes']);
+
             $product = $this->productRepository->update($id, $data);
+
+            // Update product attributes
+            if (isset($attributes)) {
+                // Delete existing attributes
+                $product->attributes()->delete();
+
+                // Create new attributes
+                if (is_array($attributes)) {
+                    foreach ($attributes as $attribute) {
+                        if (!empty($attribute['name']) && !empty($attribute['value'])) {
+                            $product->attributes()->create([
+                                'name' => $attribute['name'],
+                                'value' => $attribute['value'],
+                            ]);
+                        }
+                    }
+                }
+            }
 
             DB::commit();
             return $product;
