@@ -74,7 +74,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/products/{id}/reject', [ProductController::class, 'reject'])->name('products.reject');
 
     // Product Attributes
-    Route::resource('attributes', \App\Http\Controllers\Admin\ProductAttributeController::class);
+    Route::resource('attributes', \App\Http\Controllers\Admin\AttributeController::class)->except(['show']);
 
     // Users
     Route::resource('users', UserController::class);

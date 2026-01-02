@@ -10,6 +10,7 @@ use App\Repositories\SupplierRepository;
 use App\Repositories\ProductRepository;
 use App\Repositories\StockTransactionRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\AttributeRepository;
 
 // Services
 use App\Services\CategoryService;
@@ -17,6 +18,7 @@ use App\Services\SupplierService;
 use App\Services\ProductService;
 use App\Services\StockTransactionService;
 use App\Services\UserService;
+use App\Services\AttributeService;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,10 @@ class RepositoryServiceProvider extends ServiceProvider
             return new UserRepository(new \App\Models\User());
         });
 
+        $this->app->bind(AttributeRepository::class, function ($app) {
+            return new AttributeRepository(new \App\Models\Attribute());
+        });
+
         // Bind Services
         $this->app->bind(CategoryService::class, function ($app) {
             return new CategoryService($app->make(CategoryRepository::class));
@@ -68,6 +74,10 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(UserService::class, function ($app) {
             return new UserService($app->make(UserRepository::class));
+        });
+
+        $this->app->bind(AttributeService::class, function ($app) {
+            return new AttributeService($app->make(AttributeRepository::class));
         });
     }
 

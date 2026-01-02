@@ -39,7 +39,7 @@
                 </a>
 
                 <!-- Produk Menu with Dropdown -->
-                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.products.*') || request()->routeIs('admin.attributes.*') ? 'true' : 'false' }} }">
+                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.products.*') ? 'true' : 'false' }} }">
                     @php
                         $pendingProductCount = \App\Models\Product::where('status', 'pending')->count();
                     @endphp
@@ -59,9 +59,6 @@
                         <a href="{{ route('admin.products.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.products.index') || request()->routeIs('admin.products.create') || request()->routeIs('admin.products.edit') || request()->routeIs('admin.products.show') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
                             <i class="fas fa-list mr-2"></i> Daftar Produk
                         </a>
-                        <a href="{{ route('admin.attributes.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.attributes.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
-                            <i class="fas fa-list-ul mr-2"></i> Atribut
-                        </a>
                         <a href="{{ route('admin.products.approval') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.products.approval') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition relative">
                             <i class="fas fa-check-circle mr-2"></i> Approval
                             @if($pendingProductCount > 0)
@@ -74,7 +71,7 @@
                 </div>
 
                 <!-- Master Data Menu with Dropdown -->
-                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.suppliers.*') ? 'true' : 'false' }} }">
+                <div class="relative" x-data="{ open: {{ request()->routeIs('admin.categories.*') || request()->routeIs('admin.suppliers.*') || request()->routeIs('admin.attributes.*') ? 'true' : 'false' }} }">
                     <button @click="open = !open" class="flex items-center justify-between w-full px-6 py-3 hover:bg-blue-700 transition">
                         <div class="flex items-center">
                             <i class="fas fa-database w-6"></i>
@@ -84,10 +81,13 @@
                     </button>
                     <div x-show="open" x-collapse class="bg-blue-800">
                         <a href="{{ route('admin.categories.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.categories.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
-                            <i class="fas fa-tags mr-2"></i> Kategori
+                            <i class="fas fa-folder mr-2"></i> Kategori
                         </a>
                         <a href="{{ route('admin.suppliers.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.suppliers.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
                             <i class="fas fa-truck mr-2"></i> Supplier
+                        </a>
+                        <a href="{{ route('admin.attributes.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.attributes.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
+                            <i class="fas fa-tags mr-2"></i> Template Atribut
                         </a>
                     </div>
                 </div>

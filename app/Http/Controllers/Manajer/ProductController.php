@@ -60,8 +60,9 @@ class ProductController extends Controller
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
         $staffUsers = $this->userRepository->getByRole('staff gudang');
+        $attributes = \App\Models\Attribute::where('is_active', true)->orderBy('name')->get();
 
-        return view('manajer.products.create', compact('categories', 'suppliers', 'staffUsers'));
+        return view('manajer.products.create', compact('categories', 'suppliers', 'staffUsers', 'attributes'));
     }
 
     public function store(Request $request)
@@ -82,6 +83,7 @@ class ProductController extends Controller
             'task_quantity' => 'nullable|required_if:create_task,1|integer|min:1',
             'task_notes' => 'nullable|string|max:500',
             'attributes' => 'nullable|array',
+            'attributes.*.attribute_id' => 'nullable|exists:attributes,id',
             'attributes.*.name' => 'nullable|string|max:100',
             'attributes.*.value' => 'nullable|string|max:255',
         ]);

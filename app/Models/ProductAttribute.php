@@ -11,6 +11,7 @@ class ProductAttribute extends Model
 
     protected $fillable = [
         'product_id',
+        'attribute_id',
         'name',
         'value',
     ];
@@ -23,5 +24,13 @@ class ProductAttribute extends Model
     public function product()
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the attribute template.
+     */
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
     }
 }

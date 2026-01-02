@@ -57,6 +57,7 @@ class ProductService
                 foreach ($attributes as $attribute) {
                     if (!empty($attribute['name']) && !empty($attribute['value'])) {
                         $product->attributes()->create([
+                            'attribute_id' => $attribute['attribute_id'] ?? null,
                             'name' => $attribute['name'],
                             'value' => $attribute['value'],
                         ]);
@@ -104,6 +105,7 @@ class ProductService
                     foreach ($attributes as $attribute) {
                         if (!empty($attribute['name']) && !empty($attribute['value'])) {
                             $product->attributes()->create([
+                                'attribute_id' => $attribute['attribute_id'] ?? null,
                                 'name' => $attribute['name'],
                                 'value' => $attribute['value'],
                             ]);

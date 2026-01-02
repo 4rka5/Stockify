@@ -180,6 +180,12 @@
                     <label class="block text-sm font-medium text-gray-700 mb-2">
                         <i class="fas fa-tags mr-1"></i> Atribut Produk (Opsional)
                     </label>
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-3">
+                        <p class="text-sm text-blue-700">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Pilih template atribut yang sudah dibuat atau input manual atribut spesifik produk.
+                        </p>
+                    </div>
                     <div id="attributes-container" class="space-y-2">
                         <!-- Attribute rows will be added here -->
                     </div>
@@ -188,7 +194,7 @@
                     </button>
                     <p class="text-xs text-gray-500 mt-1">
                         <i class="fas fa-info-circle mr-1"></i>
-                        Contoh: Warna - Merah, Ukuran - XL, Bahan - Katun
+                        Pilih dari dropdown atau ketik manual jika tidak ada template yang sesuai
                     </p>
                 </div>
             </div>
@@ -198,13 +204,27 @@
 
 <script>
 let attributeIndex = 0;
+const attributeTemplates = @json($attributes ?? []);
 
 function addAttributeRow() {
     const container = document.getElementById('attributes-container');
     const row = document.createElement('div');
     row.className = 'flex gap-2 items-start';
+
+    // Build template options
+    let templateOptions = '<option value="">-- Input Manual --</option>';
+    attributeTemplates.forEach(template => {
+        templateOptions += `<option value="${template.id}" data-name="${template.name}">${template.name}</option>`;
+    });
+
     row.innerHTML = `
-        <input type="text" name="attributes[${attributeIndex}][name]" placeholder="Nama (contoh: Warna)"
+        <select onchange="handleTemplateSelect(this, ${attributeIndex})"
+                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm bg-white">
+            ${templateOptions}
+        </select>
+        <input type="hidden" name="attributes[${attributeIndex}][attribute_id]" id="attr_template_${attributeIndex}">
+        <input type="text" name="attributes[${attributeIndex}][name]" id="attr_name_${attributeIndex}"
+               placeholder="Nama (contoh: Warna)"
                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm">
         <input type="text" name="attributes[${attributeIndex}][value]" placeholder="Nilai (contoh: Merah)"
                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 text-sm">
@@ -217,10 +237,28 @@ function addAttributeRow() {
     attributeIndex++;
 }
 
-// Add one attribute row by default
-document.addEventListener('DOMContentLoaded', function() {
-    addAttributeRow();
-});
+function handleTemplateSelect(selectElement, index) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const templateId = selectElement.value;
+    const templateName = selectedOption.getAttribute('data-name');
+
+    const nameInput = document.getElementById(`attr_name_${index}`);
+    const templateIdInput = document.getElementById(`attr_template_${index}`);
+
+    if (templateId) {
+        // Template selected
+        templateIdInput.value = templateId;
+        nameInput.value = templateName;
+        nameInput.readOnly = true;
+        nameInput.classList.add('bg-gray-100');
+    } else {
+        // Manual input
+        templateIdInput.value = '';
+        nameInput.value = '';
+        nameInput.readOnly = false;
+        nameInput.classList.remove('bg-gray-100');
+    }
+}
 </script>
 
             <!-- Task Assignment Section (Optional) -->

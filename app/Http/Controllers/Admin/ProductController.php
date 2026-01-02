@@ -73,7 +73,8 @@ class ProductController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
-        return view('admin.products.create', compact('categories', 'suppliers'));
+        $attributes = \App\Models\Attribute::where('is_active', true)->orderBy('name')->get();
+        return view('admin.products.create', compact('categories', 'suppliers', 'attributes'));
     }
 
     public function store(Request $request)
@@ -89,6 +90,7 @@ class ProductController extends Controller
             'minimum_stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attributes' => 'nullable|array',
+            'attributes.*.attribute_id' => 'nullable|exists:attributes,id',
             'attributes.*.name' => 'nullable|string|max:100',
             'attributes.*.value' => 'nullable|string|max:255',
         ]);
@@ -115,7 +117,8 @@ class ProductController extends Controller
         $product->load('attributes');
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
-        return view('admin.products.edit', compact('product', 'categories', 'suppliers'));
+        $attributes = \App\Models\Attribute::where('is_active', true)->orderBy('name')->get();
+        return view('admin.products.edit', compact('product', 'categories', 'suppliers', 'attributes'));
     }
 
     public function update(Request $request, $id)
@@ -131,6 +134,7 @@ class ProductController extends Controller
             'minimum_stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'attributes' => 'nullable|array',
+            'attributes.*.attribute_id' => 'nullable|exists:attributes,id',
             'attributes.*.name' => 'nullable|string|max:100',
             'attributes.*.value' => 'nullable|string|max:255',
         ]);
