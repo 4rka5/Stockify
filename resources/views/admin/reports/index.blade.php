@@ -454,12 +454,16 @@
                             <td class="px-4 py-3 text-center">
                                 @if($transaction->status == 'pending')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">Pending</span>
+                                @elseif($transaction->status == 'pending_product_approval')
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-orange-100 text-orange-800">Pending Approval Produk</span>
                                 @elseif($transaction->status == 'diterima')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Diterima</span>
                                 @elseif($transaction->status == 'dikeluarkan')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">Dikeluarkan</span>
-                                @else
+                                @elseif($transaction->status == 'ditolak')
                                     <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Ditolak</span>
+                                @else
+                                    <span class="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">{{ ucfirst($transaction->status) }}</span>
                                 @endif
                             </td>
                             <td class="px-4 py-3 text-sm text-gray-600">
