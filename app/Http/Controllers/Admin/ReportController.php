@@ -76,14 +76,17 @@ class ReportController extends Controller
             $endDate = Carbon::now()->format('Y-m-d');
         }
 
-        // General Statistics
-        $totalProducts = $this->productRepository->count();
+        // General Statistics - Only approved products
+        $totalProducts = $this->productRepository->query()->where('status', 'approved')->count();
         $totalCategories = $this->categoryRepository->count();
         $totalSuppliers = $this->supplierRepository->count();
         $totalUsers = $this->userRepository->count();
 
-        // Stock Statistics
-        $products = $this->productRepository->query()->with('stockTransactions')->get();
+        // Stock Statistics - Only approved products
+        $products = $this->productRepository->query()
+            ->where('status', 'approved')
+            ->with('stockTransactions')
+            ->get();
         $totalStock = $products->sum(function($product) {
             return $product->current_stock;
         });
@@ -135,9 +138,11 @@ class ReportController extends Controller
             return $product->current_stock <= $product->minimum_stock;
         })->sortBy('current_stock')->take(10);
 
-        // Category Distribution
+        // Category Distribution - Only for approved products
         $categoryStats = $this->categoryRepository->query()
-            ->withCount('products')
+            ->withCount(['products' => function($query) {
+                $query->where('status', 'approved');
+            }])
             ->get()
             ->map(function($category) use ($products) {
                 $categoryProducts = $products->where('category_id', $category->id);

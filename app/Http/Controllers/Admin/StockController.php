@@ -32,6 +32,9 @@ class StockController extends Controller
         $query = $this->productRepository->query();
         $query->with(['category', 'supplier', 'stockTransactions']);
 
+        // Only show approved products
+        $query->where('status', 'approved');
+
         // Filter by category
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);

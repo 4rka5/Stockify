@@ -5,9 +5,27 @@
 @section('breadcrumb', 'Home / Laporan Stok')
 
 @section('content')
-<div class="mb-6">
-    <h3 class="text-lg font-semibold text-gray-800">Laporan Stok Barang</h3>
-    <p class="text-sm text-gray-600">Ringkasan stok semua produk dalam sistem</p>
+<div class="mb-6 flex justify-between items-center no-print">
+    <div>
+        <h3 class="text-lg font-semibold text-gray-800">Laporan Stok Barang</h3>
+        <p class="text-sm text-gray-600">Ringkasan stok semua produk dalam sistem</p>
+    </div>
+    <div class="flex gap-2">
+        <button onclick="printReport()" id="printBtn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
+            <i class="fas fa-print mr-2"></i>
+            Cetak Laporan
+        </button>
+    </div>
+</div>
+
+<!-- Print Header (only visible when printing) -->
+<div class="print-only mb-6" style="display: none;">
+    <div class="text-center border-b-2 border-gray-800 pb-4 mb-4">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">{{ $appName ?? 'STOCKIFY - SISTEM MANAJEMEN STOK' }}</h2>
+        <h3 class="text-xl font-semibold text-gray-700 mb-1">LAPORAN STOK BARANG</h3>
+        <p class="text-sm text-gray-600 mt-2">Dicetak pada: {{ now()->format('d M Y H:i') }}</p>
+        <p class="text-sm text-gray-600 font-semibold">Dicetak oleh: {{ auth()->user()->name }} (Admin)</p>
+    </div>
 </div>
 
 <!-- Stats Overview -->
@@ -68,7 +86,7 @@
 </div>
 
 <!-- Filter -->
-<div class="bg-white rounded-lg shadow-md p-4 mb-6">
+<div class="bg-white rounded-lg shadow-md p-4 mb-6 no-print">
     <form action="{{ route('admin.stock.index') }}" method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
             <label for="category" class="block text-sm font-medium text-gray-700 mb-2">
@@ -270,27 +288,220 @@ function exportToExcel() {
     downloadLink.click();
 }
 </script>
-@endpush
 
 <style>
-@media print {
-    .no-print {
-        display: none !important;
-    }
+    @media print {
+        /* Hide non-printable elements */
+        .no-print,
+        nav,
+        aside,
+        .sidebar,
+        button,
+        .print-hidden,
+        header,
+        footer,
+        .fixed,
+        .sticky {
+            display: none !important;
+        }
 
-    body * {
-        visibility: hidden;
-    }
+        /* CRITICAL: Remove scrollbars and ensure full content visibility */
+        * {
+            overflow: visible !important;
+            overflow-x: visible !important;
+            overflow-y: visible !important;
+        }
 
-    #stockTable, #stockTable * {
-        visibility: visible;
-    }
+        html, body {
+            overflow: visible !important;
+            height: auto !important;
+            width: 100% !important;
+        }
 
-    #stockTable {
-        position: absolute;
-        left: 0;
-        top: 0;
+        /* Adjust body and main container */
+        body {
+            margin: 0 !important;
+            padding: 10px !important;
+            font-size: 11px;
+            background: white !important;
+        }
+
+        /* Show print header */
+        .print-only {
+            display: block !important;
+        }
+
+        /* Optimize page layout */
+        .container,
+        .main-content,
+        main {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* Remove all scroll containers */
+        .overflow-x-auto,
+        .overflow-auto,
+        .overflow-hidden {
+            overflow: visible !important;
+        }
+
+        /* Remove margins */
+        .mb-6, .mb-4 {
+            margin-bottom: 0.8rem !important;
+        }
+
+        .mt-6, .mt-4 {
+            margin-top: 0.5rem !important;
+        }
+
+        .p-6, .p-4 {
+            padding: 0.8rem !important;
+        }
+
+        /* Table styling for print */
+        table {
+            page-break-inside: auto;
+            border-collapse: collapse;
+            width: 100% !important;
+            font-size: 10px;
+            border: 1px solid #000;
+            table-layout: auto !important;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #000;
+            padding: 6px 8px;
+            word-wrap: break-word;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
+        thead {
+            display: table-header-group;
+            background: #f3f4f6 !important;
+            font-weight: bold;
+        }
+
+        tbody {
+            display: table-row-group;
+        }
+
+        /* Card styling */
+        .bg-white,
+        .rounded-lg,
+        .shadow-md {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+            border-radius: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* Stat cards styling */
+        .grid {
+            display: grid !important;
+            gap: 0.5rem !important;
+            width: 100% !important;
+        }
+
+        .grid > div {
+            page-break-inside: avoid;
+            border: 2px solid #333 !important;
+            padding: 0.8rem !important;
+        }
+
+        /* Badge styling */
+        .bg-green-100,
+        .bg-red-100,
+        .bg-yellow-100,
+        .bg-blue-100 {
+            border: 1px solid #333 !important;
+            padding: 4px 8px !important;
+            background: #f9f9f9 !important;
+            color: #000 !important;
+        }
+
+        .text-green-800,
+        .text-red-800,
+        .text-yellow-800,
+        .text-blue-800 {
+            color: #000 !important;
+        }
+
+        /* Section headings */
+        h3, h4 {
+            page-break-after: avoid;
+            font-weight: bold;
+            margin-top: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Better number formatting */
+        .text-3xl {
+            font-size: 1.5rem !important;
+            font-weight: bold !important;
+        }
+
+        .text-lg {
+            font-size: 1.1rem !important;
+        }
+
+        /* Optimize grid layout for print */
+        .grid-cols-1,
+        .md\\:grid-cols-2,
+        .md\\:grid-cols-3,
+        .md\\:grid-cols-4 {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+
+        /* Ensure images don't break layout */
+        img {
+            max-width: 50px !important;
+            height: auto !important;
+        }
+
+        /* Remove fixed heights */
+        .h-10, .h-full {
+            height: auto !important;
+        }
     }
-}
 </style>
+
+<script>
+    // Function to print the report with confirmation
+    function printReport() {
+        const confirmed = confirm('Apakah Anda yakin ingin mencetak laporan stok ini?');
+
+        if (confirmed) {
+            setTimeout(function() {
+                window.print();
+            }, 100);
+        }
+    }
+
+    // Handle print button state
+    window.onbeforeprint = function() {
+        const btn = document.getElementById('printBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Sedang Mencetak...';
+        }
+    };
+
+    window.onafterprint = function() {
+        const btn = document.getElementById('printBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-print mr-2"></i>Cetak Laporan';
+        }
+    };
+</script>
+@endpush
 @endsection
