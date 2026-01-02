@@ -40,10 +40,18 @@
 
                 <!-- Produk Menu with Dropdown -->
                 <div class="relative" x-data="{ open: {{ request()->routeIs('admin.products.*') || request()->routeIs('admin.attributes.*') ? 'true' : 'false' }} }">
+                    @php
+                        $pendingProductCount = \App\Models\Product::where('status', 'pending')->count();
+                    @endphp
                     <button @click="open = !open" class="flex items-center justify-between w-full px-6 py-3 hover:bg-blue-700 transition">
                         <div class="flex items-center">
                             <i class="fas fa-box w-6"></i>
                             <span>Produk</span>
+                            @if($pendingProductCount > 0)
+                                <span class="ml-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+                                    {{ $pendingProductCount }}
+                                </span>
+                            @endif
                         </div>
                         <i class="fas fa-chevron-down text-sm transition-transform" :class="{ 'rotate-180': open }"></i>
                     </button>
@@ -56,9 +64,6 @@
                         </a>
                         <a href="{{ route('admin.products.approval') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.products.approval') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition relative">
                             <i class="fas fa-check-circle mr-2"></i> Approval
-                            @php
-                                $pendingProductCount = \App\Models\Product::where('status', 'pending')->count();
-                            @endphp
                             @if($pendingProductCount > 0)
                                 <span class="ml-auto bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">
                                     {{ $pendingProductCount }}

@@ -95,6 +95,7 @@
                 <option value="">Semua Status</option>
                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                 <option value="diterima" {{ request('status') == 'diterima' ? 'selected' : '' }}>Diterima</option>
+                <option value="pending_product_approval" {{ request('status') == 'pending_product_approval' ? 'selected' : '' }}>Pending Approval</option>
                 <option value="dikeluarkan" {{ request('status') == 'dikeluarkan' ? 'selected' : '' }}>Dikeluarkan</option>
                 <option value="ditolak" {{ request('status') == 'ditolak' ? 'selected' : '' }}>Ditolak</option>
             </select>

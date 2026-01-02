@@ -92,10 +92,10 @@
             <i class="fas fa-filter text-teal-500 mr-2"></i>
             Pencarian Produk
         </h3>
-        <a href="{{ route('manajer.products.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow hover:shadow-lg">
+        {{-- <a href="{{ route('manajer.products.create') }}" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-teal-500 to-blue-500 hover:from-teal-600 hover:to-blue-600 text-white text-sm font-medium rounded-lg transition-all duration-200 shadow hover:shadow-lg">
             <i class="fas fa-plus mr-2"></i>
             Tambah Produk
-        </a>
+        </a> --}}
     </div>
     <form action="{{ route('manajer.products.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
         <div class="flex-1">
