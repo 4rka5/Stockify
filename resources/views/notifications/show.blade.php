@@ -17,7 +17,7 @@
     <!-- Notification Detail Card -->
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
         <!-- Header -->
-        <div class="px-6 py-4 border-b border-gray-200 
+        <div class="px-6 py-4 border-b border-gray-200
             @if($notification->type === 'info') bg-blue-50
             @elseif($notification->type === 'success') bg-green-50
             @elseif($notification->type === 'warning') bg-yellow-50
@@ -31,7 +31,7 @@
                         @elseif($notification->type === 'warning') bg-yellow-100 text-yellow-600
                         @else bg-red-100 text-red-600
                         @endif">
-                        <i class="fas 
+                        <i class="fas
                             @if($notification->type === 'info') fa-info-circle
                             @elseif($notification->type === 'success') fa-check-circle
                             @elseif($notification->type === 'warning') fa-exclamation-triangle
