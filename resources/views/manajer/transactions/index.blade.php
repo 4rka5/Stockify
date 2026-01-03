@@ -233,7 +233,7 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                                     <a href="{{ route('manajer.transactions.show', $transaction->id) }}"
-                                       class="inline-flex items-center px-3 py-1 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded transition-colors duration-200">
+                                       class="inline-flex items-center px-3 py-2 bg-teal-500 hover:bg-teal-600 text-white text-sm rounded-lg transition">
                                         <i class="fas fa-eye mr-1"></i>
                                         Detail
                                     </a>

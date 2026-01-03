@@ -178,7 +178,7 @@
                     @if($product->image)
                         <div class="mb-3">
                             <p class="text-sm text-gray-600 mb-2">Gambar saat ini:</p>
-                            <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded-lg">
+                            <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-32 h-32 object-cover rounded-lg">
                         </div>
                     @endif
                     <input type="file" id="image" name="image" accept="image/*"

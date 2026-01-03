@@ -13,7 +13,9 @@ class SupplierRepository extends BaseRepository
 
     public function getAllWithProductCount()
     {
-        return $this->model->withCount('products')->get();
+        return $this->model->withCount(['products' => function ($query) {
+            $query->where('status', 'approved');
+        }])->get();
     }
 
     public function findByName($name)
@@ -32,7 +34,9 @@ class SupplierRepository extends BaseRepository
 
     public function searchSuppliers($keyword = null)
     {
-        $query = $this->model->withCount('products');
+        $query = $this->model->withCount(['products' => function ($query) {
+            $query->where('status', 'approved');
+        }]);
 
         if ($keyword) {
             $query->where(function ($q) use ($keyword) {

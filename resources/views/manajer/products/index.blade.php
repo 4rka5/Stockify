@@ -140,7 +140,7 @@
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="flex-shrink-0 h-16 w-16">
                                 @if($product->image)
-                                    <img class="h-16 w-16 rounded-lg object-cover" src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}">
+                                    <img class="h-16 w-16 rounded-lg object-cover" src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
                                 @else
                                     <div class="h-16 w-16 rounded-lg bg-gray-200 flex items-center justify-center">
                                         <i class="fas fa-image text-gray-400 text-2xl"></i>
@@ -151,6 +151,22 @@
                         <td class="px-6 py-4">
                             <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
                             <div class="text-sm text-gray-500">SKU: {{ $product->sku }}</div>
+                            <!-- Product Status Badge -->
+                            <div class="mt-1">
+                                @if($product->status === 'pending')
+                                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1"></i> Pending
+                                    </span>
+                                @elseif($product->status === 'approved')
+                                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1"></i> Approved
+                                    </span>
+                                @elseif($product->status === 'rejected')
+                                    <span class="inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                        <i class="fas fa-times-circle mr-1"></i> Ditolak
+                                    </span>
+                                @endif
+                            </div>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">

@@ -68,29 +68,17 @@
                                 </div>
 
                                 <div class="flex items-center gap-2 ml-4">
-                                    @if(!$notification->is_read && $notification->link)
-                                        <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-sm rounded transition">
-                                                <i class="fas fa-external-link-alt mr-1"></i>
-                                                Lihat
-                                            </button>
-                                        </form>
-                                    @elseif(!$notification->is_read)
-                                        <form action="{{ route('notifications.read', $notification->id) }}" method="POST">
-                                            @csrf
-                                            <button type="submit" class="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded transition">
-                                                <i class="fas fa-check mr-1"></i>
-                                                Tandai Dibaca
-                                            </button>
-                                        </form>
-                                    @endif
+                                    <a href="{{ route('notifications.show', $notification->id) }}" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition">
+                                        <i class="fas fa-eye mr-1"></i>
+                                        Detail
+                                    </a>
 
                                     <form action="{{ route('notifications.destroy', $notification->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus notifikasi ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm rounded transition">
-                                            <i class="fas fa-trash"></i>
+                                        <button type="submit" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition">
+                                            <i class="fas fa-trash mr-1"></i>
+                                            Hapus
                                         </button>
                                     </form>
                                 </div>

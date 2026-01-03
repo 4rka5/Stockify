@@ -19,7 +19,7 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="mb-4">
                 @if($product->image)
-                    <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-lg">
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-lg">
                 @else
                     <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
                         <i class="fas fa-image text-gray-400 text-6xl"></i>
@@ -29,6 +29,33 @@
 
             <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $product->name }}</h3>
             <p class="text-sm text-gray-600 mb-4">SKU: {{ $product->sku }}</p>
+
+            <!-- Product Status -->
+            <div class="mb-4">
+                @if($product->status === 'pending')
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                        <i class="fas fa-clock mr-1"></i> Menunggu Approval
+                    </span>
+                @elseif($product->status === 'approved')
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-green-100 text-green-800">
+                        <i class="fas fa-check-circle mr-1"></i> Disetujui
+                    </span>
+                @elseif($product->status === 'rejected')
+                    <span class="px-3 py-1 text-sm font-semibold rounded-full bg-red-100 text-red-800">
+                        <i class="fas fa-times-circle mr-1"></i> Ditolak
+                    </span>
+                @endif
+            </div>
+
+            <!-- Rejection Reason -->
+            @if($product->status === 'rejected' && $product->rejection_reason)
+            <div class="mb-4 p-3 bg-red-50 border-l-4 border-red-500 rounded">
+                <p class="text-sm font-semibold text-red-800 mb-1">
+                    <i class="fas fa-exclamation-circle mr-1"></i> Alasan Penolakan:
+                </p>
+                <p class="text-sm text-red-700">{{ $product->rejection_reason }}</p>
+            </div>
+            @endif
 
             <div class="space-y-3">
                 <div class="flex justify-between items-center py-2 border-b">

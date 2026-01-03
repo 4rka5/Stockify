@@ -71,7 +71,7 @@
             <div class="flex items-start space-x-4">
                 <div class="flex-shrink-0">
                     @if($transaction->product->image)
-                        <img src="{{ Storage::url($transaction->product->image) }}" alt="{{ $transaction->product->name }}" class="w-32 h-32 object-cover rounded-lg">
+                        <img src="{{ asset('storage/' . $transaction->product->image) }}" alt="{{ $transaction->product->name }}" class="w-32 h-32 object-cover rounded-lg">
                     @else
                         <div class="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center">
                             <i class="fas fa-box text-gray-400 text-4xl"></i>

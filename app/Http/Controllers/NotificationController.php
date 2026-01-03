@@ -83,4 +83,18 @@ class NotificationController extends Controller
 
         return redirect()->back()->with('success', 'Semua notifikasi berhasil dihapus');
     }
+
+    /**
+     * Show notification detail.
+     */
+    public function show($id)
+    {
+        $notification = $this->notificationService->markAsRead($id);
+
+        if (!$notification) {
+            abort(404);
+        }
+
+        return view('notifications.show', compact('notification'));
+    }
 }

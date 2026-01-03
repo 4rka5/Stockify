@@ -140,15 +140,17 @@
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div class="flex space-x-2">
-                            <a href="{{ route('admin.attributes.edit', $attribute->id) }}" class="text-blue-600 hover:text-blue-900 transition">
-                                <i class="fas fa-edit"></i>
+                        <div class="flex items-center space-x-2">
+                            <a href="{{ route('admin.attributes.edit', $attribute->id) }}" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Edit">
+                                <i class="fas fa-edit mr-1"></i>
+                                Edit
                             </a>
                             <form action="{{ route('admin.attributes.destroy', $attribute->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus template atribut ini?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="text-red-600 hover:text-red-900 transition">
-                                    <i class="fas fa-trash"></i>
+                                <button type="submit" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Hapus">
+                                    <i class="fas fa-trash mr-1"></i>
+                                    Hapus
                                 </button>
                             </form>
                         </div>

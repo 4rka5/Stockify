@@ -167,11 +167,13 @@
                                         <form action="{{ route('manajer.approval.approve', $item->id) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition" title="Setujui">
-                                                <i class="fas fa-check"></i>
+                                                <i class="fas fa-check mr-1"></i>
+                                                Setujui
                                             </button>
                                         </form>
                                         <button onclick="openRejectModal({{ $item->id }}, 'transaction')" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Tolak">
-                                            <i class="fas fa-times"></i>
+                                            <i class="fas fa-times mr-1"></i>
+                                            Tolak
                                         </button>
                                     </div>
                                 @else
@@ -237,11 +239,13 @@
                                         <form action="{{ route('manajer.approval.opname.approve', $item->id) }}" method="POST" class="inline">
                                             @csrf
                                             <button type="submit" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition" title="Setujui">
-                                                <i class="fas fa-check"></i>
+                                                <i class="fas fa-check mr-1"></i>
+                                                Setujui
                                             </button>
                                         </form>
                                         <button onclick="openRejectModal({{ $item->id }}, 'opname')" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Tolak">
-                                            <i class="fas fa-times"></i>
+                                            <i class="fas fa-times mr-1"></i>
+                                            Tolak
                                         </button>
                                     </div>
                                 @else

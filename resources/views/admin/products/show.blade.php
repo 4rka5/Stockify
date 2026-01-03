@@ -33,7 +33,7 @@
         <div class="bg-white rounded-lg shadow-md p-6">
             <div class="mb-4">
                 @if($product->image)
-                    <img src="{{ Storage::url($product->image) }}" alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-lg">
+                    <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-64 object-cover rounded-lg">
                 @else
                     <div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
                         <i class="fas fa-image text-gray-400 text-6xl"></i>

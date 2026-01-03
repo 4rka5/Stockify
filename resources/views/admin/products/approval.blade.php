@@ -176,7 +176,8 @@
                                     <button onclick="openDetailModal({{ json_encode($product) }})"
                                             class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition"
                                             title="Lihat Detail">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-eye mr-1"></i>
+                                        Lihat
                                     </button>
 
                                     @if($product->status === 'pending')
@@ -184,14 +185,16 @@
                                         <button onclick="openApproveModal({{ $product->id }}, '{{ $product->name }}')"
                                                 class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition"
                                                 title="Setujui">
-                                            <i class="fas fa-check"></i>
+                                            <i class="fas fa-check mr-1"></i>
+                                            Setujui
                                         </button>
 
                                         <!-- Reject Button -->
                                         <button onclick="openRejectModal({{ $product->id }}, '{{ $product->name }}')"
                                                 class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition"
                                                 title="Tolak">
-                                            <i class="fas fa-times"></i>
+                                            <i class="fas fa-times mr-1"></i>
+                                            Tolak
                                         </button>
                                     @else
                                         <span class="px-3 py-1 text-xs rounded-full {{ $product->status === 'approved' ? 'bg-gray-100 text-gray-600' : 'bg-gray-100 text-gray-600' }}">

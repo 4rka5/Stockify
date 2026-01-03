@@ -231,10 +231,11 @@
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {{ $activity->ip_address ?? '-' }}
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                         <a href="{{ route('admin.activity-logs.show', $activity->id) }}"
-                           class="text-blue-600 hover:text-blue-900">
-                            <i class="fas fa-eye"></i>
+                           class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Lihat Detail">
+                            <i class="fas fa-eye mr-1"></i>
+                            Lihat
                         </a>
                     </td>
                 </tr>

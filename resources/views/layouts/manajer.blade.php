@@ -54,7 +54,7 @@
                             <i class="fas fa-chevron-down transition-transform" :class="{ 'rotate-180': openMaster }"></i>
                         </button>
                         <div x-show="openMaster" x-collapse class="bg-teal-900">
-                            <a href="{{ route('manajer.products.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.products*') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                            <a href="{{ route('manajer.products.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.products*') ? 'bg-teal-800' : 'hover:bg-teal-700' }} transition">
                                 <i class="fas fa-box w-6 text-sm"></i>
                                 <span>Produk</span>
                             </a>
