@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\StockTransactionRepository;
 use App\Repositories\ProductRepository;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -11,13 +12,16 @@ class StockTransactionService
 {
     protected $stockTransactionRepository;
     protected $productRepository;
+    protected $notificationService;
 
     public function __construct(
         StockTransactionRepository $stockTransactionRepository,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        NotificationService $notificationService
     ) {
         $this->stockTransactionRepository = $stockTransactionRepository;
         $this->productRepository = $productRepository;
+        $this->notificationService = $notificationService;
     }
 
     public function getAllTransactions()
@@ -91,13 +95,13 @@ class StockTransactionService
             DB::beginTransaction();
 
             $transaction = $this->stockTransactionRepository->findOrFail($id);
+            $product = $this->productRepository->findOrFail($transaction->product_id);
 
             // Determine status based on transaction type
             if ($transaction->type === 'in') {
                 $status = 'diterima';
             } elseif ($transaction->type === 'out') {
                 // Validasi stok untuk transaksi keluar
-                $product = $this->productRepository->findOrFail($transaction->product_id);
                 $currentStock = $product->current_stock;
 
                 if ($currentStock < $transaction->quantity) {
@@ -112,6 +116,18 @@ class StockTransactionService
 
             $this->stockTransactionRepository->update($id, ['status' => $status]);
 
+            // Send notification to staff who created the transaction
+            if ($transaction->user_id) {
+                $typeText = $transaction->type === 'in' ? 'barang masuk' : 'barang keluar';
+                $this->notificationService->create(
+                    $transaction->user_id,
+                    'Transaksi Disetujui',
+                    'Transaksi ' . $typeText . ' untuk produk ' . $product->name . ' sebanyak ' . $transaction->quantity . ' unit telah disetujui oleh Manajer',
+                    'success',
+                    route('staff.transactions.index')
+                );
+            }
+
             DB::commit();
             return true;
         } catch (Exception $e) {
@@ -125,11 +141,13 @@ class StockTransactionService
         try {
             DB::beginTransaction();
 
+            $transaction = $this->stockTransactionRepository->findOrFail($id);
+            $product = $this->productRepository->findOrFail($transaction->product_id);
+
             $updateData = ['status' => 'ditolak'];
 
             // Add reason to notes if provided
             if ($reason) {
-                $transaction = $this->stockTransactionRepository->findOrFail($id);
                 $existingNotes = $transaction->notes;
                 $updateData['notes'] = $existingNotes
                     ? $existingNotes . ' | Ditolak: ' . $reason
@@ -137,6 +155,22 @@ class StockTransactionService
             }
 
             $this->stockTransactionRepository->update($id, $updateData);
+
+            // Send notification to staff who created the transaction
+            if ($transaction->user_id) {
+                $typeText = $transaction->type === 'in' ? 'barang masuk' : 'barang keluar';
+                $rejectMessage = 'Transaksi ' . $typeText . ' untuk produk ' . $product->name . ' sebanyak ' . $transaction->quantity . ' unit telah ditolak oleh Manajer';
+                if ($reason) {
+                    $rejectMessage .= '. Alasan: ' . $reason;
+                }
+                $this->notificationService->create(
+                    $transaction->user_id,
+                    'Transaksi Ditolak',
+                    $rejectMessage,
+                    'danger',
+                    route('staff.transactions.index')
+                );
+            }
 
             DB::commit();
             return true;

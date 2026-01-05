@@ -30,7 +30,7 @@ class ApprovalController extends Controller
         $type = $request->get('type'); // 'in', 'out', or 'opname'
 
         // Get stock transactions
-        $transactionQuery = StockTransaction::with(['product', 'user', 'assignedStaff']);
+        $transactionQuery = StockTransaction::with(['product', 'user', 'assignedStaff', 'supplier']);
 
         // Only show transactions created by staff (not by manajer themselves)
         $transactionQuery->whereHas('user', function($q) {

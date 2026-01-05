@@ -112,6 +112,28 @@
                             </span>
                         </div>
                     @endif
+
+                    @if($transaction->supplier)
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-1">
+                                <i class="fas fa-truck mr-1"></i>
+                                {{ $transaction->type === 'in' ? 'Supplier' : 'Tujuan/Customer' }}
+                            </label>
+                            <p class="text-lg font-bold text-blue-600">
+                                {{ $transaction->supplier->name }}
+                            </p>
+                            <p class="text-sm text-gray-600 mt-1">
+                                <i class="fas fa-phone mr-1"></i>
+                                {{ $transaction->supplier->phone }}
+                            </p>
+                            @if($transaction->supplier->address)
+                                <p class="text-sm text-gray-600 mt-1">
+                                    <i class="fas fa-map-marker-alt mr-1"></i>
+                                    {{ $transaction->supplier->address }}
+                                </p>
+                            @endif
+                        </div>
+                    @endif
                 </div>
 
                 <!-- Right Column -->

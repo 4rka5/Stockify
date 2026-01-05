@@ -11,6 +11,7 @@ class StockTransaction extends Model
 
     protected $fillable = [
         'product_id',
+        'supplier_id',
         'user_id',
         'assigned_to',
         'assigned_by',
@@ -39,6 +40,14 @@ class StockTransaction extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Get the supplier for this transaction.
+     */
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
     }
 
     /**

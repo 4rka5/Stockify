@@ -95,6 +95,25 @@
                 </div>
 
                 <div>
+                    <label for="supplier_id_out" class="block text-sm font-medium text-gray-700 mb-2">
+                        <i class="fas fa-truck mr-1"></i>
+                        Tujuan/Customer (Opsional)
+                    </label>
+                    <select name="supplier_id" id="supplier_id_out"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                        <option value="">-- Pilih Tujuan --</option>
+                        @foreach($suppliers as $supplier)
+                            <option value="{{ $supplier->id }}">
+                                {{ $supplier->name }} - {{ $supplier->phone }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('supplier_id')
+                        <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
                     <label for="quantity_out" class="block text-sm font-medium text-gray-700 mb-2">
                         Jumlah <span class="text-red-500">*</span>
                     </label>
@@ -203,6 +222,13 @@
                                             {{ $transaction->product->current_stock }} unit
                                         </span>
                                     </div>
+                                    @if($transaction->supplier)
+                                        <div class="flex items-center text-sm text-gray-600">
+                                            <i class="fas fa-truck w-6 mr-2 text-gray-400"></i>
+                                            <span class="font-medium">Tujuan:</span>
+                                            <span class="ml-2 text-blue-600 font-semibold">{{ $transaction->supplier->name }}</span>
+                                        </div>
+                                    @endif
                                     <div class="flex items-center text-sm text-gray-600">
                                         <i class="fas fa-user w-6 mr-2 text-gray-400"></i>
                                         <span class="font-medium">Dibuat oleh:</span>

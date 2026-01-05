@@ -39,6 +39,20 @@
 
                 <!-- Navigation -->
                 <nav class="mt-6" x-data="{ openMaster: {{ request()->routeIs('manajer.products*', 'manajer.suppliers*') ? 'true' : 'false' }}, openStock: {{ request()->routeIs('manajer.stock*', 'manajer.transactions*') ? 'true' : 'false' }} }">
+                    @php
+                        // Count pending transactions from staff that need manager approval
+                        $pendingTransactionCount = \App\Models\StockTransaction::where('status', 'pending')
+                            ->whereHas('user', function($q) {
+                                $q->where('role', 'staff gudang');
+                            })
+                            ->count();
+
+                        // Count pending stock opname
+                        $pendingOpnameCount = \App\Models\StockOpname::where('status', 'pending')->count();
+
+                        $totalPendingCount = $pendingTransactionCount + $pendingOpnameCount;
+                    @endphp
+
                     <a href="{{ route('manajer.dashboard') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.dashboard') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-home w-6"></i>
                         <span>Dashboard</span>
@@ -79,16 +93,25 @@
                                 <i class="fas fa-boxes w-6 text-sm"></i>
                                 <span>Monitor Stok</span>
                             </a>
-                            <a href="{{ route('manajer.transactions.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.transactions*') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
-                                <i class="fas fa-exchange-alt w-6 text-sm"></i>
+                            <a href="{{ route('manajer.transactions.create') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.transactions.create') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                                <i class="fas fa-plus-circle w-6 text-sm"></i>
+                                <span>Buat Transaksi</span>
+                            </a>
+                            <a href="{{ route('manajer.transactions.index') }}" class="flex items-center px-6 py-2 pl-12 {{ request()->routeIs('manajer.transactions.index', 'manajer.transactions.show') ? 'bg-teal-800' : 'hover:bg-teal-800' }} transition">
+                                <i class="fas fa-history w-6 text-sm"></i>
                                 <span>Riwayat Transaksi</span>
                             </a>
                         </div>
                     </div>
 
-                    <a href="{{ route('manajer.approval.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.approval*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
+                    <a href="{{ route('manajer.approval.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.approval*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition relative">
                         <i class="fas fa-check-circle w-6"></i>
                         <span>Persetujuan</span>
+                        @if($totalPendingCount > 0)
+                            <span class="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+                                {{ $totalPendingCount }}
+                            </span>
+                        @endif
                     </a>
                     <a href="{{ route('manajer.reports.index') }}" class="flex items-center px-6 py-3 {{ request()->routeIs('manajer.reports*') ? 'bg-teal-700 border-l-4 border-white' : 'hover:bg-teal-700' }} transition">
                         <i class="fas fa-chart-line w-6"></i>

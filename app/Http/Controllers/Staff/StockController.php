@@ -12,6 +12,7 @@ use App\Repositories\StockTransactionRepository;
 use App\Repositories\ProductRepository;
 use App\Models\StockTransaction;
 use App\Models\Product;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
@@ -54,22 +55,27 @@ class StockController extends Controller
             return $product->current_stock;
         })->values();
 
+        // Get all suppliers
+        $suppliers = \App\Models\Supplier::orderBy('name')->get();
+
         // Statistics
         $confirmedToday = $this->stockTransactionRepository->countByStatusAndUser('diterima', Auth::id(), 'in', true);
         $totalThisMonth = $this->stockTransactionRepository->countByStatusAndUser('diterima', Auth::id(), 'in', false, true);
 
-        return view('staff.stocks.in', compact('pendingTransactions', 'confirmedToday', 'totalThisMonth', 'products'));
+        return view('staff.stocks.in', compact('pendingTransactions', 'confirmedToday', 'totalThisMonth', 'products', 'suppliers'));
     }
 
     public function storeIn(Request $request)
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
             'quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string|max:500',
         ], [
             'product_id.required' => 'Produk harus dipilih',
             'product_id.exists' => 'Produk tidak ditemukan',
+            'supplier_id.exists' => 'Supplier tidak ditemukan',
             'quantity.required' => 'Jumlah harus diisi',
             'quantity.integer' => 'Jumlah harus berupa angka',
             'quantity.min' => 'Jumlah minimal 1',
@@ -78,6 +84,7 @@ class StockController extends Controller
         try {
             $transactionData = [
                 'product_id' => $validated['product_id'],
+                'supplier_id' => $validated['supplier_id'] ?? null,
                 'type' => 'in',
                 'quantity' => $validated['quantity'],
                 'date' => now(),
@@ -122,22 +129,27 @@ class StockController extends Controller
             return $product->current_stock;
         })->values();
 
+        // Get all suppliers
+        $suppliers = \App\Models\Supplier::orderBy('name')->get();
+
         // Statistics
-        $preparedToday = $this->stockTransactionRepository->countByStatusAndUser('dikeluarkan', Auth::id(), 'out', true);
+        $confirmedToday = $this->stockTransactionRepository->countByStatusAndUser('dikeluarkan', Auth::id(), 'out', true);
         $totalThisMonth = $this->stockTransactionRepository->countByStatusAndUser('dikeluarkan', Auth::id(), 'out', false, true);
 
-        return view('staff.stocks.out', compact('pendingTransactions', 'preparedToday', 'totalThisMonth', 'products'));
+        return view('staff.stocks.out', compact('pendingTransactions', 'confirmedToday', 'totalThisMonth', 'products', 'suppliers'));
     }
 
     public function storeOut(Request $request)
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
+            'supplier_id' => 'nullable|exists:suppliers,id',
             'quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string|max:500',
         ], [
             'product_id.required' => 'Produk harus dipilih',
             'product_id.exists' => 'Produk tidak ditemukan',
+            'supplier_id.exists' => 'Supplier tidak ditemukan',
             'quantity.required' => 'Jumlah harus diisi',
             'quantity.integer' => 'Jumlah harus berupa angka',
             'quantity.min' => 'Jumlah minimal 1',
@@ -153,6 +165,7 @@ class StockController extends Controller
 
             $transactionData = [
                 'product_id' => $validated['product_id'],
+                'supplier_id' => $validated['supplier_id'] ?? null,
                 'type' => 'out',
                 'quantity' => $validated['quantity'],
                 'date' => now(),
@@ -271,7 +284,7 @@ class StockController extends Controller
         ]);
 
         try {
-            $transaction = StockTransaction::findOrFail($id);
+            $transaction = StockTransaction::with(['product', 'assignedBy'])->findOrFail($id);
 
             // Check if transaction is assigned to current user
             if ($transaction->assigned_to !== Auth::id()) {
@@ -281,6 +294,14 @@ class StockController extends Controller
             // Check if already processed
             if ($transaction->status !== 'pending') {
                 return back()->with('error', 'Transaksi sudah diproses sebelumnya');
+            }
+
+            // For stock out, check availability before confirming
+            if ($validated['status'] === 'dikeluarkan') {
+                $product = Product::with('stockTransactions')->findOrFail($transaction->product_id);
+                if ($product->current_stock < $transaction->quantity) {
+                    return back()->with('error', 'Stok tidak mencukupi untuk mengeluarkan barang');
+                }
             }
 
             // Update status
@@ -293,17 +314,32 @@ class StockController extends Controller
 
             $transaction->save();
 
+            // Send notification to the manager who assigned this task
+            if ($transaction->assigned_by) {
+                $statusText = $validated['status'] === 'diterima' ? 'diterima' :
+                             ($validated['status'] === 'dikeluarkan' ? 'dikeluarkan' : 'ditolak');
+                $message = "Staff " . Auth::user()->name . " telah menyelesaikan tugas {$transaction->type} untuk produk {$transaction->product->name} dengan status: {$statusText}";
+
+                $this->notificationService->sendNotification(
+                    $transaction->assigned_by,
+                    $message,
+                    'info',
+                    route('manajer.transactions.show', $transaction->id)
+                );
+            }
+
+            // Log activity
+            ActivityLog::create([
+                'user_id' => Auth::id(),
+                'action' => 'confirmed_transaction',
+                'description' => "Staff mengkonfirmasi transaksi {$transaction->type} untuk produk {$transaction->product->name} dengan status {$validated['status']}",
+                'ip_address' => $request->ip(),
+            ]);
+
             // Stock is updated automatically through transaction status change
             if ($validated['status'] === 'diterima') {
                 return redirect()->route('staff.stock.in')->with('success', 'Barang masuk berhasil dikonfirmasi dan stok telah diperbarui');
             } elseif ($validated['status'] === 'dikeluarkan') {
-                $product = Product::with('stockTransactions')->findOrFail($transaction->product_id);
-
-                // Check stock availability using dynamic calculation
-                if ($product->current_stock < $transaction->quantity) {
-                    return back()->with('error', 'Stok tidak mencukupi untuk mengeluarkan barang');
-                }
-
                 return redirect()->route('staff.stock.out')->with('success', 'Barang keluar berhasil dikonfirmasi dan stok telah diperbarui');
             } else {
                 $statusName = $transaction->type === 'in' ? 'barang masuk' : 'barang keluar';

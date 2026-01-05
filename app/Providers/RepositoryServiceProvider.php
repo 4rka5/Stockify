@@ -19,6 +19,7 @@ use App\Services\ProductService;
 use App\Services\StockTransactionService;
 use App\Services\UserService;
 use App\Services\AttributeService;
+use App\Services\NotificationService;
 
 class RepositoryServiceProvider extends ServiceProvider
 {
@@ -68,7 +69,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(StockTransactionService::class, function ($app) {
             return new StockTransactionService(
                 $app->make(StockTransactionRepository::class),
-                $app->make(ProductRepository::class)
+                $app->make(ProductRepository::class),
+                $app->make(NotificationService::class)
             );
         });
 

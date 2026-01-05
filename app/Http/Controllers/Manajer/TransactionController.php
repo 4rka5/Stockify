@@ -73,7 +73,8 @@ class TransactionController extends Controller
             'product',
             'product.category',
             'user',
-            'assignedStaff'
+            'assignedStaff',
+            'supplier'
         ])->findOrFail($id);
 
         return view('manajer.transactions.show', compact('transaction'));

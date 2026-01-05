@@ -11,8 +11,9 @@ class ProductController extends Controller
 {
     public function index(Request $request)
     {
-        // Build query
-        $query = Product::with(['category', 'supplier', 'stockTransactions']);
+        // Build query - only show approved products
+        $query = Product::with(['category', 'supplier', 'stockTransactions'])
+            ->where('status', 'approved');
 
         // Search filter
         if ($request->filled('search')) {
@@ -63,8 +64,10 @@ class ProductController extends Controller
 
         $categories = Category::all();
 
-        // Statistics
-        $allProductsForStats = Product::with('stockTransactions')->get();
+        // Statistics - only approved products
+        $allProductsForStats = Product::with('stockTransactions')
+            ->where('status', 'approved')
+            ->get();
         $totalProducts = $allProductsForStats->count();
         $lowStock = $allProductsForStats->filter(fn($p) => $p->current_stock <= $p->minimum_stock && $p->current_stock > 0)->count();
         $outOfStock = $allProductsForStats->filter(fn($p) => $p->current_stock <= 0)->count();
@@ -75,6 +78,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = Product::with(['category', 'supplier', 'stockTransactions', 'stockTransactions.user'])
+            ->where('status', 'approved')
             ->findOrFail($id);
 
         return view('staff.products.show', compact('product'));

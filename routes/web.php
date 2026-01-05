@@ -134,6 +134,8 @@ Route::middleware(['auth', 'role:manajer gudang'])->prefix('manajer')->name('man
 
     // Transactions
     Route::get('/transactions', [ManajerTransactionController::class, 'index'])->name('transactions.index');
+    Route::get('/transactions/create', [ManajerStockController::class, 'create'])->name('transactions.create');
+    Route::post('/transactions/store', [ManajerStockController::class, 'store'])->name('transactions.store');
     Route::get('/transactions/{id}', [ManajerTransactionController::class, 'show'])->name('transactions.show');
 
     // Reports
