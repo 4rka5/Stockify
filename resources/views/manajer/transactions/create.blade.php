@@ -113,7 +113,7 @@
                                     <option value="">-- Pilih Produk --</option>
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}">
-                                            {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->stock_quantity }}
+                                            {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->current_stock }} unit
                                         </option>
                                     @endforeach
                                 </select>
@@ -202,8 +202,8 @@
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
                                     <option value="">-- Pilih Produk --</option>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" data-stock="{{ $product->stock_quantity }}">
-                                            {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->stock_quantity }}
+                                        <option value="{{ $product->id }}" data-stock="{{ $product->current_stock }}">
+                                            {{ $product->name }} ({{ $product->sku }}) - Stok: {{ $product->current_stock }} unit
                                         </option>
                                     @endforeach
                                 </select>
@@ -313,8 +313,8 @@
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
                                     <option value="">-- Pilih Produk --</option>
                                     @foreach($products as $product)
-                                        <option value="{{ $product->id }}" data-stock="{{ $product->stock_quantity }}">
-                                            {{ $product->name }} ({{ $product->sku }}) - Stok Sistem: {{ $product->stock_quantity }}
+                                        <option value="{{ $product->id }}" data-stock="{{ $product->current_stock }}">
+                                            {{ $product->name }} ({{ $product->sku }}) - Stok Sistem: {{ $product->current_stock }} unit
                                         </option>
                                     @endforeach
                                 </select>
