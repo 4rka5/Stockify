@@ -86,7 +86,7 @@
     </div>
 </div>
 
-<!-- Stock Actions -->
+{{-- <!-- Stock Actions -->
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
     <!-- Stock In Form -->
     <div class="bg-white rounded-lg shadow-md p-6">
@@ -177,14 +177,14 @@
             </button>
         </form>
     </div>
-</div>
+</div> --}}
 
 <!-- Export Buttons & Actions -->
 <div class="flex justify-between items-center mb-6">
-    <button onclick="openAssignOpnameModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition no-print">
+    {{-- <button onclick="openAssignOpnameModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition no-print">
         <i class="fas fa-clipboard-check mr-2"></i>
         Tugaskan Cek Stok Fisik
-    </button>
+    </button> --}}
     <div class="flex gap-3">
         <button onclick="window.print()" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-lg transition no-print">
             <i class="fas fa-print mr-2"></i>
@@ -203,9 +203,9 @@
         <table class="min-w-full divide-y divide-gray-200" id="stockTable">
             <thead class="bg-gray-50">
                 <tr>
-                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {{-- <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                         <input type="checkbox" id="selectAll" class="rounded">
-                    </th>
+                    </th> --}}
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
@@ -214,6 +214,7 @@
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stok Tersedia</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Stok Minimum</th>
                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
@@ -225,9 +226,9 @@
                         $isEmpty = $currentStock == 0;
                     @endphp
                     <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                        {{-- <td class="px-6 py-4 whitespace-nowrap text-center">
                             <input type="checkbox" class="product-checkbox rounded" value="{{ $product->id }}" data-product-name="{{ $product->name }}">
-                        </td>
+                        </td> --}}
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
                         <td class="px-6 py-4">
                             <div class="flex items-center">
@@ -281,10 +282,18 @@
                                 </span>
                             @endif
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center">
+                            <a href="{{ route('manajer.products.show', $product->id) }}"
+                               class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-medium rounded-lg transition-colors duration-200"
+                               title="Lihat Detail Produk">
+                                <i class="fas fa-eye mr-1"></i>
+                                Detail
+                            </a>
+                        </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-12 text-center">
+                        <td colspan="9" class="px-6 py-12 text-center">
                             <i class="fas fa-inbox text-gray-300 text-5xl mb-4"></i>
                             <p class="text-gray-500">Tidak ada data produk</p>
                         </td>
