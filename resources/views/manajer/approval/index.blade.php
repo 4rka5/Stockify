@@ -205,27 +205,27 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 @if($item->status === 'pending')
                                     <div class="flex items-center space-x-2">
-                                        <a href="{{ route('manajer.transactions.show', $item->id) }}" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Lihat Detail">
+                                        <button onclick="showTransactionDetail({{ $item->id }}, '{{ $item->product->name }}', '{{ $item->product->sku }}', '{{ $item->type }}', {{ $item->quantity }}, {{ $item->product->current_stock }}, '{{ $item->user->name }}', '{{ $item->user->role ?? '' }}', '{{ $item->date->format('d M Y') }}', '{{ $item->notes ?? '' }}', '{{ $item->supplier ? $item->supplier->name : '' }}', '{{ ucfirst($item->status) }}')" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors duration-200" title="Lihat Detail">
                                             <i class="fas fa-eye mr-1"></i>
                                             Detail
-                                        </a>
+                                        </button>
                                         <form action="{{ route('manajer.approval.approve', $item->id) }}" method="POST" class="inline">
                                             @csrf
-                                            <button type="submit" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition" title="Setujui">
+                                            <button type="submit" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition-colors duration-200" title="Setujui">
                                                 <i class="fas fa-check mr-1"></i>
                                                 Setujui
                                             </button>
                                         </form>
-                                        <button onclick="openRejectModal({{ $item->id }}, 'transaction')" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Tolak">
+                                        <button onclick="openRejectModal({{ $item->id }}, 'transaction')" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors duration-200" title="Tolak">
                                             <i class="fas fa-times mr-1"></i>
                                             Tolak
                                         </button>
                                     </div>
                                 @else
-                                    <a href="{{ route('manajer.transactions.show', $item->id) }}" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Lihat Detail">
+                                    <button onclick="showTransactionDetail({{ $item->id }}, '{{ $item->product->name }}', '{{ $item->product->sku }}', '{{ $item->type }}', {{ $item->quantity }}, {{ $item->product->current_stock }}, '{{ $item->user->name }}', '{{ $item->user->role ?? '' }}', '{{ $item->date->format('d M Y') }}', '{{ $item->notes ?? '' }}', '{{ $item->supplier ? $item->supplier->name : '' }}', '{{ ucfirst($item->status) }}')" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors duration-200" title="Lihat Detail">
                                         <i class="fas fa-eye mr-1"></i>
                                         Detail
-                                    </a>
+                                    </button>
                                 @endif
                             </td>
                         </tr>
@@ -300,27 +300,25 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                 @if($item->status === 'pending')
-                                    <div class="flex flex-col gap-2">
-                                        <div class="flex items-center space-x-2">
-                                            <form action="{{ route('manajer.approval.opname.approve', $item->id) }}" method="POST" class="inline">
-                                                @csrf
-                                                <button type="submit" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition" title="Setujui">
-                                                    <i class="fas fa-check mr-1"></i>
-                                                    Setujui
-                                                </button>
-                                            </form>
-                                            <button onclick="openRejectModal({{ $item->id }}, 'opname')" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition" title="Tolak">
-                                                <i class="fas fa-times mr-1"></i>
-                                                Tolak
-                                            </button>
-                                        </div>
-                                        <button onclick="showOpnameDetail({{ $item->id }}, '{{ $item->product->name }}', '{{ $item->product->sku }}', {{ $item->system_stock }}, {{ $item->physical_stock }}, {{ $item->difference }}, '{{ $item->notes }}', '{{ $item->user->name }}', '{{ $item->checked_at->format('d M Y H:i') }}')" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition w-full justify-center" title="Lihat Detail">
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="showOpnameDetail({{ $item->id }}, '{{ $item->product->name }}', '{{ $item->product->sku }}', {{ $item->system_stock }}, {{ $item->physical_stock }}, {{ $item->difference }}, '{{ $item->notes }}', '{{ $item->user->name }}', '{{ $item->checked_at->format('d M Y H:i') }}')" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors duration-200" title="Lihat Detail">
                                             <i class="fas fa-eye mr-1"></i>
                                             Detail
                                         </button>
+                                        <form action="{{ route('manajer.approval.opname.approve', $item->id) }}" method="POST" class="inline">
+                                            @csrf
+                                            <button type="submit" class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition-colors duration-200" title="Setujui">
+                                                <i class="fas fa-check mr-1"></i>
+                                                Setujui
+                                            </button>
+                                        </form>
+                                        <button onclick="openRejectModal({{ $item->id }}, 'opname')" class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition-colors duration-200" title="Tolak">
+                                            <i class="fas fa-times mr-1"></i>
+                                            Tolak
+                                        </button>
                                     </div>
                                 @else
-                                    <button onclick="showOpnameDetail({{ $item->id }}, '{{ $item->product->name }}', '{{ $item->product->sku }}', {{ $item->system_stock }}, {{ $item->physical_stock }}, {{ $item->difference }}, '{{ $item->notes }}', '{{ $item->user->name }}', '{{ $item->checked_at->format('d M Y H:i') }}')" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition" title="Lihat Detail">
+                                    <button onclick="showOpnameDetail({{ $item->id }}, '{{ $item->product->name }}', '{{ $item->product->sku }}', {{ $item->system_stock }}, {{ $item->physical_stock }}, {{ $item->difference }}, '{{ $item->notes }}', '{{ $item->user->name }}', '{{ $item->checked_at->format('d M Y H:i') }}')" class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition-colors duration-200" title="Lihat Detail">
                                         <i class="fas fa-eye mr-1"></i>
                                         Detail
                                     </button>
@@ -387,6 +385,130 @@
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Transaction Detail Modal -->
+<div id="transactionDetailModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 z-50 overflow-y-auto">
+    <div class="flex items-center justify-center min-h-screen px-4 py-8">
+        <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-auto">
+            <div class="sticky top-0 bg-gradient-to-r from-blue-500 to-indigo-500 px-6 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-white flex items-center">
+                        <i class="fas fa-file-alt mr-2"></i>
+                        Detail Transaksi
+                    </h3>
+                    <button onclick="closeTransactionDetailModal()" class="text-white hover:text-gray-200">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-6">
+                <!-- Product Info -->
+                <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <h4 class="text-sm font-semibold text-gray-600 mb-3">
+                        <i class="fas fa-box mr-1"></i>
+                        Informasi Produk
+                    </h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">Nama Produk</p>
+                            <p id="transactionProductName" class="text-sm font-bold text-gray-900"></p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-gray-500 mb-1">SKU</p>
+                            <p id="transactionProductSku" class="text-sm font-mono text-gray-900"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Type Badge -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-gray-600 mb-3">
+                        <i class="fas fa-exchange-alt mr-1"></i>
+                        Jenis Transaksi
+                    </h4>
+                    <span id="transactionTypeBadge" class="px-3 py-2 text-sm font-semibold rounded-full"></span>
+                </div>
+
+                <!-- Stock Info -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-gray-600 mb-3">
+                        <i class="fas fa-chart-line mr-1"></i>
+                        Informasi Stok
+                    </h4>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <p class="text-xs text-blue-600 mb-2">Stok Saat Ini</p>
+                            <p id="transactionCurrentStock" class="text-2xl font-bold text-blue-700"></p>
+                            <p class="text-xs text-gray-500 mt-1">unit</p>
+                        </div>
+                        <div class="p-4 rounded-lg border" id="transactionQuantityCard">
+                            <p class="text-xs mb-2" id="transactionQuantityLabel">Jumlah</p>
+                            <p id="transactionQuantity" class="text-2xl font-bold"></p>
+                            <p class="text-xs text-gray-500 mt-1">unit</p>
+                        </div>
+                        <div class="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                            <p class="text-xs text-indigo-600 mb-2">Prediksi Akhir</p>
+                            <p id="transactionFinalStock" class="text-2xl font-bold text-indigo-700"></p>
+                            <p class="text-xs text-gray-500 mt-1">unit</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Info -->
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-xs text-gray-500 mb-1">
+                            <i class="fas fa-user mr-1"></i>
+                            Diajukan Oleh
+                        </p>
+                        <p id="transactionUserName" class="text-sm font-semibold text-gray-900"></p>
+                        <p id="transactionUserRole" class="text-xs text-gray-500 mt-1"></p>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <p class="text-xs text-gray-500 mb-1">
+                            <i class="fas fa-calendar mr-1"></i>
+                            Tanggal Transaksi
+                        </p>
+                        <p id="transactionDate" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                </div>
+
+                <!-- Supplier Info (if exists) -->
+                <div id="transactionSupplierSection" class="mb-6 p-4 bg-teal-50 rounded-lg border border-teal-200 hidden">
+                    <p class="text-xs text-teal-600 font-semibold mb-2">
+                        <i class="fas fa-truck mr-1"></i>
+                        Supplier
+                    </p>
+                    <p id="transactionSupplier" class="text-sm font-bold text-teal-900"></p>
+                </div>
+
+                <!-- Status Badge -->
+                <div class="mb-6">
+                    <h4 class="text-sm font-semibold text-gray-600 mb-3">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        Status
+                    </h4>
+                    <span id="transactionStatusBadge" class="px-3 py-2 text-sm font-semibold rounded-full"></span>
+                </div>
+
+                <!-- Notes -->
+                <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200" id="transactionNotesSection">
+                    <p class="text-xs text-yellow-700 font-semibold mb-2">
+                        <i class="fas fa-sticky-note mr-1"></i>
+                        Catatan
+                    </p>
+                    <p id="transactionNotes" class="text-sm text-gray-700"></p>
+                </div>
+            </div>
+            <div class="sticky bottom-0 bg-gray-50 px-6 py-4 border-t border-gray-200">
+                <button onclick="closeTransactionDetailModal()" class="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition">
+                    <i class="fas fa-times mr-2"></i>
+                    Tutup
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -487,6 +609,93 @@
 
 @push('scripts')
 <script>
+function showTransactionDetail(id, productName, productSku, type, quantity, currentStock, userName, userRole, date, notes, supplier, status) {
+    document.getElementById('transactionProductName').textContent = productName;
+    document.getElementById('transactionProductSku').textContent = productSku;
+    document.getElementById('transactionCurrentStock').textContent = currentStock;
+    document.getElementById('transactionQuantity').textContent = quantity;
+    document.getElementById('transactionUserName').textContent = userName;
+    document.getElementById('transactionUserRole').textContent = userRole;
+    document.getElementById('transactionDate').textContent = date;
+
+    // Transaction Type Badge
+    const typeBadge = document.getElementById('transactionTypeBadge');
+    if (type === 'in') {
+        typeBadge.className = 'px-3 py-2 text-sm font-semibold rounded-full bg-green-100 text-green-800';
+        typeBadge.innerHTML = '<i class="fas fa-arrow-down mr-1"></i> Stok Masuk';
+    } else {
+        typeBadge.className = 'px-3 py-2 text-sm font-semibold rounded-full bg-red-100 text-red-800';
+        typeBadge.innerHTML = '<i class="fas fa-arrow-up mr-1"></i> Stok Keluar';
+    }
+
+    // Quantity Card
+    const quantityCard = document.getElementById('transactionQuantityCard');
+    const quantityLabel = document.getElementById('transactionQuantityLabel');
+    const quantityValue = document.getElementById('transactionQuantity');
+
+    if (type === 'in') {
+        quantityCard.className = 'p-4 bg-green-50 rounded-lg border border-green-200';
+        quantityLabel.className = 'text-xs text-green-600 mb-2';
+        quantityValue.className = 'text-2xl font-bold text-green-700';
+        quantityValue.textContent = '+' + quantity;
+    } else {
+        quantityCard.className = 'p-4 bg-red-50 rounded-lg border border-red-200';
+        quantityLabel.className = 'text-xs text-red-600 mb-2';
+        quantityValue.className = 'text-2xl font-bold text-red-700';
+        quantityValue.textContent = '-' + quantity;
+    }
+
+    // Calculate final stock
+    const finalStock = type === 'in' ? parseInt(currentStock) + parseInt(quantity) : parseInt(currentStock) - parseInt(quantity);
+    document.getElementById('transactionFinalStock').textContent = finalStock;
+
+    // Status Badge
+    const statusBadge = document.getElementById('transactionStatusBadge');
+    if (status === 'Pending') {
+        statusBadge.className = 'px-3 py-2 text-sm font-semibold rounded-full bg-yellow-100 text-yellow-800';
+        statusBadge.innerHTML = '<i class="fas fa-clock mr-1"></i> Pending';
+    } else if (status === 'Diterima' || status === 'Dikeluarkan') {
+        statusBadge.className = 'px-3 py-2 text-sm font-semibold rounded-full bg-green-100 text-green-800';
+        statusBadge.innerHTML = '<i class="fas fa-check-circle mr-1"></i> ' + status;
+    } else {
+        statusBadge.className = 'px-3 py-2 text-sm font-semibold rounded-full bg-red-100 text-red-800';
+        statusBadge.innerHTML = '<i class="fas fa-times-circle mr-1"></i> ' + status;
+    }
+
+    // Show or hide supplier section
+    const supplierSection = document.getElementById('transactionSupplierSection');
+    const supplierElement = document.getElementById('transactionSupplier');
+    if (supplier && supplier !== '' && supplier !== 'null') {
+        supplierElement.textContent = supplier;
+        supplierSection.classList.remove('hidden');
+    } else {
+        supplierSection.classList.add('hidden');
+    }
+
+    // Show or hide notes section
+    const notesSection = document.getElementById('transactionNotesSection');
+    const notesElement = document.getElementById('transactionNotes');
+    if (notes && notes !== '-' && notes !== '' && notes !== 'null') {
+        notesElement.textContent = notes;
+        notesSection.classList.remove('hidden');
+    } else {
+        notesSection.classList.add('hidden');
+    }
+
+    document.getElementById('transactionDetailModal').classList.remove('hidden');
+}
+
+function closeTransactionDetailModal() {
+    document.getElementById('transactionDetailModal').classList.add('hidden');
+}
+
+// Close transaction detail modal on outside click
+document.getElementById('transactionDetailModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeTransactionDetailModal();
+    }
+});
+
 function openRejectModal(itemId, type) {
     const modal = document.getElementById('rejectModal');
     const form = document.getElementById('rejectForm');
