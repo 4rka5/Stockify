@@ -87,6 +87,9 @@
                         Nama Template
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Kategori
+                    </th>
+                    <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Deskripsi
                     </th>
                     <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -117,6 +120,16 @@
                                 </div>
                             </div>
                         </div>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if($attribute->category)
+                        <span class="px-2 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-medium">
+                            <i class="fas fa-folder mr-1"></i>
+                            {{ $attribute->category->name }}
+                        </span>
+                        @else
+                        <span class="text-gray-400 text-xs">-</span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 text-sm text-gray-600">
                         {{ $attribute->description ?? '-' }}

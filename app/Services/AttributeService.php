@@ -92,7 +92,8 @@ class AttributeService
     public function getAllAttributes()
     {
         try {
-            return \App\Models\Attribute::withCount('productAttributes')
+            return \App\Models\Attribute::with('category')
+                ->withCount('productAttributes')
                 ->orderBy('name')
                 ->get();
         } catch (\Exception $e) {

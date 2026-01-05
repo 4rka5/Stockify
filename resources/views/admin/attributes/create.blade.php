@@ -38,6 +38,28 @@
                     </p>
                 </div>
 
+                <!-- Kategori -->
+                <div>
+                    <label for="category_id" class="block text-sm font-medium text-gray-700 mb-2">
+                        Kategori <span class="text-red-500">*</span>
+                    </label>
+                    <select name="category_id" id="category_id" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent @error('category_id') border-red-500 @enderror">
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($categories as $category)
+                            <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ $category->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('category_id')
+                    <p class="mt-1 text-sm text-red-500">{{ $message }}</p>
+                    @enderror
+                    <p class="mt-1 text-xs text-gray-500">
+                        <i class="fas fa-info-circle"></i> Template atribut ini hanya akan muncul untuk produk dengan kategori yang dipilih
+                    </p>
+                </div>
+
                 <!-- Deskripsi -->
                 <div>
                     <label for="description" class="block text-sm font-medium text-gray-700 mb-2">

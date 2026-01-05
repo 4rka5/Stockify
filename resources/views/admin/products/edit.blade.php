@@ -229,8 +229,17 @@
             <div id="attributes-container" class="space-y-2">
                 @foreach($product->attributes as $index => $attribute)
                 <div class="flex gap-2 items-start">
-                    <input type="text" name="attributes[{{ $index }}][name]" value="{{ old('attributes.'.$index.'.name', $attribute->name) }}" placeholder="Nama Atribut (contoh: Ukuran)"
-                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    <select onchange="handleTemplateSelect(this, {{ $index }})" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+                        <option value="">-- Input Manual --</option>
+                        @foreach($attributes->where('category_id', $product->category_id) as $attrTemplate)
+                            <option value="{{ $attrTemplate->id }}" data-name="{{ $attrTemplate->name }}" {{ $attribute->attribute_id == $attrTemplate->id ? 'selected' : '' }}>
+                                {{ $attrTemplate->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <input type="hidden" name="attributes[{{ $index }}][attribute_id]" id="attr_template_{{ $index }}" value="{{ old('attributes.'.$index.'.attribute_id', $attribute->attribute_id) }}">
+                    <input type="text" name="attributes[{{ $index }}][name]" id="attr_name_{{ $index }}" value="{{ old('attributes.'.$index.'.name', $attribute->name) }}" placeholder="Nama Atribut (contoh: Ukuran)"
+                           class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm {{ $attribute->attribute_id ? 'bg-gray-100' : '' }}" {{ $attribute->attribute_id ? 'readonly' : '' }}>
                     <input type="text" name="attributes[{{ $index }}][value]" value="{{ old('attributes.'.$index.'.value', $attribute->value) }}" placeholder="Nilai (contoh: XL)"
                            class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
                     <button type="button" onclick="this.parentElement.remove()"
@@ -245,7 +254,7 @@
             </button>
             <p class="text-xs text-gray-500 mt-2">
                 <i class="fas fa-lightbulb mr-1"></i>
-                <strong>Contoh atribut:</strong> Ukuran - XL, Warna - Hitam, Berat - 500g, Material - Katun
+                Pilih dari template atau input manual. Template hanya menampilkan atribut untuk kategori yang dipilih.
             </p>
         </div>
 
@@ -313,13 +322,62 @@
 @push('scripts')
 <script>
 let attributeIndex = {{ $product->attributes->count() }};
+const attributeTemplates = @json($attributes ?? []);
+let selectedCategoryId = {{ $product->category_id }};
+
+// Listen to category change
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category_id');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            const oldCategoryId = selectedCategoryId;
+            selectedCategoryId = this.value;
+
+            // Warn user if changing category with existing attributes
+            const container = document.getElementById('attributes-container');
+            if (container && container.children.length > 0 && oldCategoryId != selectedCategoryId) {
+                if (confirm('Mengubah kategori akan mereset atribut yang sudah ada. Lanjutkan?')) {
+                    container.innerHTML = '';
+                } else {
+                    // Revert category selection
+                    this.value = oldCategoryId;
+                    selectedCategoryId = oldCategoryId;
+                }
+            }
+        });
+    }
+});
 
 function addAttributeRow() {
     const container = document.getElementById('attributes-container');
+
+    // Check if category is selected
+    if (!selectedCategoryId) {
+        alert('Silakan pilih kategori terlebih dahulu!');
+        return;
+    }
+
     const row = document.createElement('div');
     row.className = 'flex gap-2 items-start';
+
+    // Build template options - filter by selected category
+    let templateOptions = '<option value="">-- Input Manual --</option>';
+    const filteredTemplates = attributeTemplates.filter(template =>
+        template.category_id == selectedCategoryId
+    );
+
+    filteredTemplates.forEach(template => {
+        templateOptions += `<option value="${template.id}" data-name="${template.name}">${template.name}</option>`;
+    });
+
     row.innerHTML = `
-        <input type="text" name="attributes[${attributeIndex}][name]" placeholder="Nama Atribut (contoh: Ukuran)"
+        <select onchange="handleTemplateSelect(this, ${attributeIndex})"
+                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm bg-white">
+            ${templateOptions}
+        </select>
+        <input type="hidden" name="attributes[${attributeIndex}][attribute_id]" id="attr_template_${attributeIndex}">
+        <input type="text" name="attributes[${attributeIndex}][name]" id="attr_name_${attributeIndex}"
+               placeholder="Nama Atribut (contoh: Ukuran)"
                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
         <input type="text" name="attributes[${attributeIndex}][value]" placeholder="Nilai (contoh: XL)"
                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
@@ -330,6 +388,29 @@ function addAttributeRow() {
     `;
     container.appendChild(row);
     attributeIndex++;
+}
+
+function handleTemplateSelect(selectElement, index) {
+    const selectedOption = selectElement.options[selectElement.selectedIndex];
+    const templateId = selectElement.value;
+    const templateName = selectedOption.getAttribute('data-name');
+
+    const nameInput = document.getElementById(`attr_name_${index}`);
+    const templateIdInput = document.getElementById(`attr_template_${index}`);
+
+    if (templateId) {
+        // Template selected
+        templateIdInput.value = templateId;
+        nameInput.value = templateName;
+        nameInput.readOnly = true;
+        nameInput.classList.add('bg-gray-100');
+    } else {
+        // Manual input
+        templateIdInput.value = '';
+        nameInput.value = '';
+        nameInput.readOnly = false;
+        nameInput.classList.remove('bg-gray-100');
+    }
 }
 
 function previewImage(event) {

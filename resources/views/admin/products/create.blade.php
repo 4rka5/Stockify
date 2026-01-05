@@ -269,15 +269,44 @@
 <script>
 let attributeIndex = 0;
 const attributeTemplates = @json($attributes ?? []);
+let selectedCategoryId = null;
+
+// Listen to category change
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('category_id');
+    if (categorySelect) {
+        categorySelect.addEventListener('change', function() {
+            selectedCategoryId = this.value;
+            // Clear existing attributes when category changes
+            const container = document.getElementById('attributes-container');
+            if (container) {
+                container.innerHTML = '';
+            }
+        });
+        // Set initial category if exists
+        selectedCategoryId = categorySelect.value;
+    }
+});
 
 function addAttributeRow() {
     const container = document.getElementById('attributes-container');
+
+    // Check if category is selected
+    if (!selectedCategoryId) {
+        alert('Silakan pilih kategori terlebih dahulu!');
+        return;
+    }
+
     const row = document.createElement('div');
     row.className = 'flex gap-2 items-start';
 
-    // Build template options
+    // Build template options - filter by selected category
     let templateOptions = '<option value="">-- Input Manual --</option>';
-    attributeTemplates.forEach(template => {
+    const filteredTemplates = attributeTemplates.filter(template =>
+        template.category_id == selectedCategoryId
+    );
+
+    filteredTemplates.forEach(template => {
         templateOptions += `<option value="${template.id}" data-name="${template.name}">${template.name}</option>`;
     });
 
@@ -323,11 +352,6 @@ function handleTemplateSelect(selectElement, index) {
         nameInput.classList.remove('bg-gray-100');
     }
 }
-
-// Add one attribute row by default
-document.addEventListener('DOMContentLoaded', function() {
-    // Don't add default row - let user decide
-});
 
 function previewImage(event) {
     const preview = document.getElementById('imagePreview');

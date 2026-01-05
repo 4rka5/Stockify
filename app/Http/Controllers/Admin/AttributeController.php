@@ -30,13 +30,15 @@ class AttributeController extends Controller
 
     public function create()
     {
-        return view('admin.attributes.create');
+        $categories = \App\Models\Category::orderBy('name')->get();
+        return view('admin.attributes.create', compact('categories'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
         ]);
@@ -53,13 +55,15 @@ class AttributeController extends Controller
     public function edit($id)
     {
         $attribute = $this->attributeService->getAttributeById($id);
-        return view('admin.attributes.edit', compact('attribute'));
+        $categories = \App\Models\Category::orderBy('name')->get();
+        return view('admin.attributes.edit', compact('attribute', 'categories'));
     }
 
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'is_active' => 'boolean',
         ]);

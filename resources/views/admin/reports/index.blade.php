@@ -10,8 +10,8 @@
         <h3 class="text-lg font-semibold text-gray-800">Dashboard Laporan</h3>
         <p class="text-sm text-gray-600">Ringkasan dan analisis data sistem inventory</p>
     </div>
-    <div class="flex gap-2">
-        <button onclick="printReport()" id="printBtn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
+    <div class="flex gap-2 no-print">
+        <button onclick="printReport()" id="printBtn" class="no-print px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
             <i class="fas fa-print mr-2"></i>
             Cetak Laporan
         </button>
@@ -275,6 +275,16 @@
     </div>
 </div>
 
+<!-- Print-only Chart Info -->
+<div class="print-only" style="display: none;">
+    <div class="mb-4 p-4 border border-gray-300 rounded">
+        <p class="text-sm text-gray-700 italic">
+            <i class="fas fa-info-circle mr-2"></i>
+            Catatan: Grafik tren transaksi dan distribusi stok per kategori dapat dilihat pada versi digital laporan ini.
+        </p>
+    </div>
+</div>
+
 <!-- Top Products by Value -->
 <div class="mb-6">
     <div class="bg-white rounded-lg shadow-md p-6">
@@ -282,7 +292,7 @@
             <h4 class="text-md font-semibold text-gray-800">
                 <i class="fas fa-star mr-2"></i>Top 5 Produk Berdasarkan Nilai Stok
             </h4>
-            <a href="{{ route('admin.stock.index') }}" class="text-blue-600 hover:text-blue-700 text-sm">
+            <a href="{{ route('admin.stock.index') }}" class="no-print text-blue-600 hover:text-blue-700 text-sm">
                 Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
@@ -342,7 +352,7 @@
             <h4 class="text-md font-semibold text-gray-800">
                 <i class="fas fa-exclamation-triangle text-yellow-500 mr-2"></i>Produk dengan Stok Rendah/Habis
             </h4>
-            <a href="{{ route('admin.stock.index') }}?stock_status=low" class="text-yellow-600 hover:text-yellow-700 text-sm">
+            <a href="{{ route('admin.stock.index') }}?stock_status=low" class="no-print text-yellow-600 hover:text-yellow-700 text-sm">
                 Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
@@ -417,7 +427,7 @@
             <h4 class="text-md font-semibold text-gray-800">
                 <i class="fas fa-history mr-2"></i>Transaksi Terbaru
             </h4>
-            <a href="{{ route('admin.stock-transactions.index') }}" class="text-blue-600 hover:text-blue-700 text-sm">
+            <a href="{{ route('admin.stock-transactions.index') }}" class="no-print text-blue-600 hover:text-blue-700 text-sm">
                 Lihat Semua <i class="fas fa-arrow-right ml-1"></i>
             </a>
         </div>
@@ -478,17 +488,17 @@
 </div>
 
 <!-- Export Buttons -->
-<div class="flex justify-end gap-3">
-    <a href="{{ route('admin.reports.export.stock') }}" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+<div class="flex justify-end gap-3 no-print">
+    <a href="{{ route('admin.reports.export.stock') }}" class="no-print px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
         <i class="fas fa-file-excel mr-2"></i>
         Export Laporan Stok
     </a>
     <a href="{{ route('admin.reports.export.transactions') }}?start_date={{ $startDate }}&end_date={{ $endDate }}"
-       class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+       class="no-print px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
         <i class="fas fa-file-excel mr-2"></i>
         Export Laporan Transaksi
     </a>
-    <button onclick="exportAllReports()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition">
+    <button onclick="exportAllReports()" class="no-print px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition">
         <i class="fas fa-download mr-2"></i>
         Export Semua Laporan
     </button>

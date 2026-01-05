@@ -10,8 +10,8 @@
         <h3 class="text-lg font-semibold text-gray-800">Laporan Stok Barang</h3>
         <p class="text-sm text-gray-600">Ringkasan dan analisis data stok</p>
     </div>
-    <div class="flex gap-2">
-        <button onclick="printReport()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
+    <div class="flex gap-2 no-print">
+        <button onclick="printReport()" class="no-print px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
             <i class="fas fa-print mr-2"></i>
             Cetak Laporan
         </button>

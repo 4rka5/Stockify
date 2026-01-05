@@ -73,7 +73,7 @@ class ProductController extends Controller
     {
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
-        $attributes = \App\Models\Attribute::where('is_active', true)->orderBy('name')->get();
+        $attributes = \App\Models\Attribute::where('is_active', true)->with('category')->orderBy('name')->get();
         return view('admin.products.create', compact('categories', 'suppliers', 'attributes'));
     }
 
@@ -117,7 +117,7 @@ class ProductController extends Controller
         $product->load('attributes');
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
-        $attributes = \App\Models\Attribute::where('is_active', true)->orderBy('name')->get();
+        $attributes = \App\Models\Attribute::where('is_active', true)->with('category')->orderBy('name')->get();
         return view('admin.products.edit', compact('product', 'categories', 'suppliers', 'attributes'));
     }
 

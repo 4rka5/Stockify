@@ -60,7 +60,7 @@ class ProductController extends Controller
         $categories = $this->categoryService->getAllCategories();
         $suppliers = $this->supplierService->getAllSuppliers();
         $staffUsers = $this->userRepository->getByRole('staff gudang');
-        $attributes = \App\Models\Attribute::where('is_active', true)->orderBy('name')->get();
+        $attributes = \App\Models\Attribute::where('is_active', true)->with('category')->orderBy('name')->get();
 
         return view('manajer.products.create', compact('categories', 'suppliers', 'staffUsers', 'attributes'));
     }

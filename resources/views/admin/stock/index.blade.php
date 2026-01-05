@@ -10,8 +10,8 @@
         <h3 class="text-lg font-semibold text-gray-800">Laporan Stok Barang</h3>
         <p class="text-sm text-gray-600">Ringkasan stok semua produk dalam sistem</p>
     </div>
-    <div class="flex gap-2">
-        <button onclick="printReport()" id="printBtn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
+    <div class="flex gap-2 no-print">
+        <button onclick="printReport()" id="printBtn" class="no-print px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-md hover:shadow-lg transform hover:scale-105">
             <i class="fas fa-print mr-2"></i>
             Cetak Laporan
         </button>
@@ -142,12 +142,12 @@
 </div>
 
 <!-- Export Buttons -->
-<div class="flex justify-end gap-3 mb-6">
-    <button onclick="window.print()" class="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+<div class="flex justify-end gap-3 mb-6 no-print">
+    <button onclick="window.print()" class="no-print px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
         <i class="fas fa-print mr-2"></i>
         Cetak
     </button>
-    <button onclick="exportToExcel()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition">
+    <button onclick="exportToExcel()" class="no-print px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition">
         <i class="fas fa-file-excel mr-2"></i>
         Export Excel
     </button>
