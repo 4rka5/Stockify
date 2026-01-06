@@ -86,6 +86,7 @@ class StockTransactionRepository extends BaseRepository
     {
         return $this->model->with(['product', 'user'])
             ->where('type', $type)
+            ->whereIn('status', ['diterima', 'dikeluarkan']) // Hanya hitung transaksi yang sudah disetujui
             ->whereBetween('date', [$startDate, $endDate])
             ->orderBy('date', 'desc')
             ->get();
