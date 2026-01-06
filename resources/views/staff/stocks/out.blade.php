@@ -23,7 +23,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-gray-600 text-sm font-medium">Disiapkan Hari Ini</p>
-                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $preparedToday }}</p>
+                <p class="text-3xl font-bold text-gray-800 mt-2">{{ $confirmedToday }}</p>
             </div>
             <div class="bg-blue-100 rounded-full p-3">
                 <i class="fas fa-check-circle text-blue-500 text-2xl"></i>
