@@ -266,8 +266,8 @@ class StockController extends Controller
 
         $categories = $this->categoryService->getAllCategories();
 
-        // Calculate statistics
-        $allProductsForStats = Product::with('stockTransactions')->get();
+        // Calculate statistics (only approved products)
+        $allProductsForStats = Product::with('stockTransactions')->where('status', 'approved')->get();
         $totalProducts = $allProductsForStats->count();
         $safeStock = $allProductsForStats->filter(fn($p) => $p->current_stock > $p->minimum_stock)->count();
         $lowStock = $allProductsForStats->filter(fn($p) => $p->current_stock <= $p->minimum_stock && $p->current_stock > 0)->count();
