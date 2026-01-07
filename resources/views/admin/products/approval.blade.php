@@ -94,40 +94,39 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kategori</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Harga</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Diajukan Oleh</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Produk</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Kategori</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Supplier</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Harga</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Diajukan Oleh</th>
+                        <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-4 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach($products as $product)
-                        <tr class="hover:bg-gray-50">
+                        <tr class="hover:bg-blue-50 transition-colors duration-150">
                             <td class="px-6 py-4">
-                                <div class="flex items-center">
+                                <div class="flex items-center space-x-3">
                                     @if($product->image)
                                         <img src="{{ asset('storage/' . $product->image) }}"
                                              alt="{{ $product->name }}"
-                                             class="w-20 h-20 rounded-lg object-cover mr-3">
+                                             class="w-16 h-16 rounded-lg object-cover shadow-sm flex-shrink-0">
                                     @else
-                                        <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center mr-3">
-                                            <i class="fas fa-image text-gray-400 text-2xl"></i>
+                                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center flex-shrink-0">
+                                            <i class="fas fa-image text-gray-400 text-xl"></i>
                                         </div>
                                     @endif
-                                    <div>
-                                        <div class="text-sm font-medium text-gray-900">{{ $product->name }}</div>
-                                        <div class="text-sm text-gray-500">SKU: {{ $product->sku }}</div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="text-sm font-semibold text-gray-900 truncate">{{ $product->name }}</div>
+                                        <div class="text-xs text-gray-500">SKU: {{ $product->sku }}</div>
                                         @php
                                             $pendingTask = $product->stockTransactions()->where('status', 'pending_product_approval')->first();
                                         @endphp
                                         @if($pendingTask)
                                             <div class="mt-1">
-                                                <span class="inline-flex items-center px-2 py-0.5 text-xs rounded bg-blue-100 text-blue-700">
-                                                    <i class="fas fa-tasks mr-1"></i> Ada tugas menunggu
+                                                <span class="inline-flex items-center px-2 py-0.5 text-xs rounded-full bg-blue-100 text-blue-700 font-medium">
+                                                    <i class="fas fa-tasks mr-1"></i> Tugas Pending
                                                 </span>
                                             </div>
                                         @endif
@@ -135,7 +134,7 @@
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">
+                                <span class="px-3 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-800">
                                     {{ $product->category?->name ?? '-' }}
                                 </span>
                             </td>
@@ -143,63 +142,63 @@
                                 {{ $product->supplier?->name ?? '-' }}
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-xs text-gray-500">Beli</div>
-                                <div class="text-sm font-medium text-gray-900">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</div>
-                                <div class="text-xs text-gray-500 mt-1">Jual</div>
-                                <div class="text-sm font-medium text-green-600">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</div>
+                                <div class="space-y-1">
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-500">Beli:</span>
+                                        <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($product->purchase_price, 0, ',', '.') }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-xs font-medium text-gray-500">Jual:</span>
+                                        <span class="text-sm font-semibold text-green-600">Rp {{ number_format($product->selling_price, 0, ',', '.') }}</span>
+                                    </div>
+                                </div>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-gray-900">{{ $product->creator?->name ?? '-' }}</div>
-                                <div class="text-xs text-gray-500">{{ $product->creator?->role ?? '-' }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $product->created_at?->format('d/m/Y H:i') ?? '-' }}
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-medium text-gray-900">{{ $product->creator?->name ?? '-' }}</div>
+                                <div class="text-xs text-gray-500">{{ ucfirst($product->creator?->role ?? '-') }}</div>
+                                <div class="text-xs text-gray-400 mt-1">
+                                    <i class="far fa-calendar-alt mr-1"></i>
+                                    {{ $product->created_at?->format('d/m/Y H:i') ?? '-' }}
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @if($product->status === 'pending')
-                                    <span class="px-3 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800 font-medium">
-                                        <i class="fas fa-clock mr-1"></i> Pending
+                                    <span class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                        <i class="fas fa-clock mr-1.5"></i> Pending
                                     </span>
                                 @elseif($product->status === 'approved')
-                                    <span class="px-3 py-1 text-xs rounded-full bg-green-100 text-green-800 font-medium">
-                                        <i class="fas fa-check-circle mr-1"></i> Disetujui
+                                    <span class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                                        <i class="fas fa-check-circle mr-1.5"></i> Disetujui
                                     </span>
                                 @else
-                                    <span class="px-3 py-1 text-xs rounded-full bg-red-100 text-red-800 font-medium">
-                                        <i class="fas fa-times-circle mr-1"></i> Ditolak
+                                    <span class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-red-100 text-red-800">
+                                        <i class="fas fa-times-circle mr-1.5"></i> Ditolak
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                <div class="flex items-center space-x-2">
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="flex items-center justify-center space-x-2">
                                     <!-- Detail Button -->
                                     <button onclick="openDetailModal({{ json_encode($product) }})"
-                                            class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg transition"
+                                            class="inline-flex items-center px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white text-xs font-semibold rounded-lg shadow-sm transition duration-150"
                                             title="Lihat Detail">
-                                        <i class="fas fa-eye mr-1"></i>
-                                        Lihat
+                                        <i class="fas fa-eye"></i>
                                     </button>
 
                                     @if($product->status === 'pending')
                                         <!-- Approve Button -->
                                         <button onclick="openApproveModal({{ $product->id }}, '{{ $product->name }}')"
-                                                class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-sm rounded-lg transition"
+                                                class="inline-flex items-center px-3 py-2 bg-green-500 hover:bg-green-600 text-white text-xs font-semibold rounded-lg shadow-sm transition duration-150"
                                                 title="Setujui">
-                                            <i class="fas fa-check mr-1"></i>
-                                            Setujui
+                                            <i class="fas fa-check"></i>
                                         </button>
 
                                         <!-- Reject Button -->
                                         <button onclick="openRejectModal({{ $product->id }}, '{{ $product->name }}')"
-                                                class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition"
+                                                class="inline-flex items-center px-3 py-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold rounded-lg shadow-sm transition duration-150"
                                                 title="Tolak">
-                                            <i class="fas fa-times mr-1"></i>
-                                            Tolak
+                                            <i class="fas fa-times"></i>
                                         </button>
-                                    @else
-                                        <span class="px-3 py-1 text-xs rounded-full {{ $product->status === 'approved' ? 'bg-gray-100 text-gray-600' : 'bg-gray-100 text-gray-600' }}">
-                                            {{ $product->status === 'approved' ? 'Disetujui' : 'Ditolak' }}
-                                        </span>
                                     @endif
                                 </div>
                             </td>

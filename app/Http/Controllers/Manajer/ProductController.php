@@ -99,7 +99,7 @@ class ProductController extends Controller
                 $image = $request->file('image');
                 $imageName = time() . '_' . $image->getClientOriginalName();
                 $image->storeAs('products', $imageName, 'public');
-                $validated['image'] = $imageName;
+                $validated['image'] = 'products/' . $imageName;
             }
 
             // Set status pending and creator
