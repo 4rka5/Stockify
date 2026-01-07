@@ -24,9 +24,9 @@ class DashboardController extends Controller
     {
         $lowStockProducts = $this->productService->getLowStockProducts();
         $todayIncoming = $this->stockTransactionService->getTodayTransactions()
-            ->where('type', 'in');
+            ->where('type', 'in', 'approved');
         $todayOutgoing = $this->stockTransactionService->getTodayTransactions()
-            ->where('type', 'out');
+            ->where('type', 'out', 'approved');
         $pendingTransactions = $this->stockTransactionService->getPendingTransactions();
 
         // Get pending stock opname

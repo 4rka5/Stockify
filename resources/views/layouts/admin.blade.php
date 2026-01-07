@@ -128,7 +128,7 @@
                     </button>
                     <div x-show="open" x-collapse class="bg-blue-800">
                         <a href="{{ route('admin.reports.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.reports.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
-                            <i class="fas fa-file-chart-line mr-2"></i> Laporan Komprehensif
+                            <i class="fas fa-chart-pie mr-2"></i> Laporan Komprehensif
                         </a>
                         <a href="{{ route('admin.activity-logs.index') }}" class="flex items-center px-6 py-2 pl-12 text-sm {{ request()->routeIs('admin.activity-logs.*') ? 'bg-blue-900 border-l-4 border-white' : 'hover:bg-blue-900' }} transition">
                             <i class="fas fa-history mr-2"></i> Activity Logs
