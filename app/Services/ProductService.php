@@ -169,6 +169,11 @@ class ProductService
         return $this->productRepository->getTopStockProducts($limit);
     }
 
+    public function getApprovedProducts()
+    {
+        return $this->productRepository->getApprovedProducts();
+    }
+
     private function uploadImage($image)
     {
         $path = $image->store('products', 'public');

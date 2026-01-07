@@ -30,7 +30,7 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $totalProducts = $this->productService->getAllProducts()->count();
+        $totalProducts = $this->productService->getApprovedProducts()->count();
         $totalUsers = $this->userService->getAllUsers()->count();
         $totalCategories = $this->categoryService->getAllCategories()->count();
 
