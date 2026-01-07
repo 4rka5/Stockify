@@ -184,13 +184,14 @@ class ProductController extends Controller
                 $task->update(['status' => 'pending']);
 
                 // Notify assigned staff
+                $taskType = $task->type === 'in' ? 'Barang Masuk' : 'Barang Keluar';
                 $this->notificationService->create(
                     $task->user_id,
-                    'Tugas Baru: ' . ($task->type === 'in' ? 'Barang Masuk' : 'Barang Keluar'),
+                    'Tugas Baru: ' . $taskType,
                     'Produk ' . $product->name . ' telah disetujui. Anda ditugaskan untuk ' .
                     ($task->type === 'in' ? 'menerima' : 'mengeluarkan') . ' barang sebanyak ' . $task->quantity . ' unit.',
                     'info',
-                    route('staff.stocks.' . $task->type)
+                    $task->type === 'in' ? route('staff.stock.in') : route('staff.stock.out')
                 );
             }
 

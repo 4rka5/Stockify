@@ -132,6 +132,17 @@ class ProductController extends Controller
                     'status' => 'pending_product_approval', // Special status
                     'assigned_by' => Auth::id(),
                 ]);
+
+                // Send notification to assigned staff
+                $taskType = $request->task_type === 'in' ? 'Barang Masuk' : 'Barang Keluar';
+                $staff = \App\Models\User::find($request->assigned_staff_id);
+                $this->notificationService->create(
+                    $request->assigned_staff_id,
+                    'Tugas Transaksi ' . $taskType . ' (Pending Approval)',
+                    'Anda ditugaskan untuk transaksi ' . strtolower($taskType) . ' produk ' . $product->name . ' sebanyak ' . $request->task_quantity . ' unit. Tugas akan aktif setelah produk disetujui admin.',
+                    'info',
+                    $request->task_type === 'in' ? route('staff.stock.in') : route('staff.stock.out')
+                );
             }
 
             // Notify all admin

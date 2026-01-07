@@ -112,11 +112,11 @@
                 @foreach($products as $product)
                     <div class="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-200">
                         <!-- Product Image -->
-                        <div class="bg-gray-100 h-48 flex items-center justify-center">
+                        <div class="bg-gray-100 h-50 flex items-center justify-center">
                             @if($product->image)
                                 <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}" class="h-full w-full object-cover">
                             @else
-                                <i class="fas fa-box text-gray-400 text-6xl"></i>
+                                <i class="fas fa-box text-gray-400 text-6x2"></i>
                             @endif
                         </div>
 

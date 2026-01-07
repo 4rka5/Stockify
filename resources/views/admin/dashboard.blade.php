@@ -138,22 +138,68 @@
             @if($recentActivities->count() > 0)
                 <div class="space-y-3 max-h-96 overflow-y-auto">
                     @foreach($recentActivities as $activity)
-                        <div class="flex items-start space-x-3 p-3 {{ $activity->type === 'in' ? 'bg-green-50' : 'bg-blue-50' }} rounded-lg">
+                        @php
+                            // Determine background color based on status
+                            $bgColor = 'bg-gray-50';
+                            $iconBg = 'bg-gray-500';
+
+                            if($activity->status === 'pending') {
+                                $bgColor = 'bg-yellow-50 border-l-4 border-yellow-400';
+                                $iconBg = 'bg-yellow-500';
+                            } elseif($activity->status === 'diterima') {
+                                $bgColor = 'bg-green-50 border-l-4 border-green-400';
+                                $iconBg = 'bg-green-500';
+                            } elseif($activity->status === 'dikeluarkan') {
+                                $bgColor = 'bg-blue-50 border-l-4 border-blue-400';
+                                $iconBg = 'bg-blue-500';
+                            } elseif($activity->status === 'ditolak') {
+                                $bgColor = 'bg-red-50 border-l-4 border-red-400';
+                                $iconBg = 'bg-red-500';
+                            } elseif($activity->status === 'pending_product_approval') {
+                                $bgColor = 'bg-orange-50 border-l-4 border-orange-400';
+                                $iconBg = 'bg-orange-500';
+                            }
+                        @endphp
+                        <div class="flex items-start space-x-3 p-3 {{ $bgColor }} rounded-lg transition-all duration-200 hover:shadow-md">
                             <div class="flex-shrink-0 mt-1">
-                                <div class="w-8 h-8 rounded-full {{ $activity->type === 'in' ? 'bg-green-500' : 'bg-blue-500' }} flex items-center justify-center">
+                                <div class="w-8 h-8 rounded-full {{ $iconBg }} flex items-center justify-center shadow-sm">
                                     <i class="fas {{ $activity->type === 'in' ? 'fa-arrow-down' : 'fa-arrow-up' }} text-white text-xs"></i>
                                 </div>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <p class="text-sm font-medium text-gray-900">
-                                    {{ $activity->type === 'in' ? 'Barang Masuk' : 'Barang Keluar' }}
-                                </p>
-                                <p class="text-sm text-gray-700">{{ $activity->product->name }}</p>
+                                <div class="flex items-center justify-between gap-2">
+                                    <p class="text-sm font-semibold text-gray-900">
+                                        {{ $activity->type === 'in' ? 'Barang Masuk' : 'Barang Keluar' }}
+                                    </p>
+                                    @if($activity->status === 'pending')
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-yellow-200 text-yellow-800 shadow-sm">
+                                            <i class="fas fa-clock mr-1"></i>Pending
+                                        </span>
+                                    @elseif($activity->status === 'diterima')
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-green-200 text-green-800 shadow-sm">
+                                            <i class="fas fa-check-circle mr-1"></i>Diterima
+                                        </span>
+                                    @elseif($activity->status === 'dikeluarkan')
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-blue-200 text-blue-800 shadow-sm">
+                                            <i class="fas fa-check-circle mr-1"></i>Dikeluarkan
+                                        </span>
+                                    @elseif($activity->status === 'ditolak')
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-red-200 text-red-800 shadow-sm">
+                                            <i class="fas fa-times-circle mr-1"></i>Ditolak
+                                        </span>
+                                    @elseif($activity->status === 'pending_product_approval')
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full bg-orange-200 text-orange-800 shadow-sm">
+                                            <i class="fas fa-hourglass-half mr-1"></i>Pending Produk
+                                        </span>
+                                    @endif
+                                </div>
+                                <p class="text-sm font-medium text-gray-800 mt-1">{{ $activity->product->name }}</p>
                                 <p class="text-xs text-gray-600 mt-1">
-                                    {{ $activity->quantity }} unit • oleh {{ $activity->user->name }}
+                                    <i class="fas fa-box mr-1"></i>{{ $activity->quantity }} unit •
+                                    <i class="fas fa-user ml-1 mr-1"></i>{{ $activity->user->name }}
                                 </p>
-                                <p class="text-xs text-gray-500">
-                                    {{ $activity->date->diffForHumans() }}
+                                <p class="text-xs text-gray-500 mt-1">
+                                    <i class="far fa-clock mr-1"></i>{{ $activity->date->diffForHumans() }}
                                 </p>
                             </div>
                         </div>

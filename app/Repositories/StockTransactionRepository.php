@@ -46,6 +46,9 @@ class StockTransactionRepository extends BaseRepository
     {
         return $this->model->with(['product', 'user'])
             ->pending()
+            ->whereHas('user', function($query) {
+                $query->where('role', 'staff gudang');
+            })
             ->orderBy('date', 'desc')
             ->get();
     }
