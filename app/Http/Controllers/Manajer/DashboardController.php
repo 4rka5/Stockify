@@ -29,11 +29,18 @@ class DashboardController extends Controller
             ->where('type', 'out');
         $pendingTransactions = $this->stockTransactionService->getPendingTransactions();
 
+        // Get pending stock opname
+        $pendingOpnames = \App\Models\StockOpname::with(['product', 'user'])
+            ->where('status', 'pending')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
         return view('manajer.dashboard', compact(
             'lowStockProducts',
             'todayIncoming',
             'todayOutgoing',
-            'pendingTransactions'
+            'pendingTransactions',
+            'pendingOpnames'
         ));
     }
 }

@@ -56,15 +56,21 @@
             </h3>
         </div>
         <div class="p-6">
-            @if($pendingTransactions->count() > 0)
+            @if($pendingTransactions->count() > 0 || $pendingOpnames->count() > 0)
                 <div class="space-y-3">
                     @foreach($pendingTransactions->take(5) as $transaction)
-                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                        <div class="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-500">
                             <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-1 text-xs font-semibold rounded bg-{{ $transaction->type === 'in' ? 'green' : 'blue' }}-100 text-{{ $transaction->type === 'in' ? 'green' : 'blue' }}-800">
+                                        {{ $transaction->type === 'in' ? 'MASUK' : 'KELUAR' }}
+                                    </span>
+                                </div>
                                 <p class="font-medium text-gray-800">{{ $transaction->product->name }}</p>
                                 <p class="text-sm text-gray-600">
                                     {{ $transaction->user->name ?? 'N/A' }} • {{ \Carbon\Carbon::parse($transaction->created_at)->format('d/m/Y H:i') }}
                                 </p>
+                                <p class="text-sm text-gray-600">Jumlah: <span class="font-semibold">{{ $transaction->quantity }} unit</span></p>
                             </div>
                             <div class="flex gap-2">
                                 <form action="{{ route('manajer.stock.approve', $transaction->id) }}" method="POST">
@@ -74,6 +80,41 @@
                                     </button>
                                 </form>
                                 <form action="{{ route('manajer.stock.reject', $transaction->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    @foreach($pendingOpnames->take(5 - $pendingTransactions->count()) as $opname)
+                        <div class="flex items-center justify-between p-3 bg-purple-50 rounded-lg border-l-4 border-purple-500">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-1 text-xs font-semibold rounded bg-purple-100 text-purple-800">
+                                        STOCK OPNAME
+                                    </span>
+                                </div>
+                                <p class="font-medium text-gray-800">{{ $opname->product->name }}</p>
+                                <p class="text-sm text-gray-600">
+                                    {{ $opname->user->name ?? 'N/A' }} • {{ \Carbon\Carbon::parse($opname->created_at)->format('d/m/Y H:i') }}
+                                </p>
+                                <p class="text-sm text-gray-600">
+                                    Sistem: <span class="font-semibold">{{ $opname->system_stock }}</span> |
+                                    Fisik: <span class="font-semibold">{{ $opname->physical_stock }}</span> |
+                                    Selisih: <span class="font-semibold {{ $opname->difference >= 0 ? 'text-green-600' : 'text-red-600' }}">{{ $opname->difference > 0 ? '+' : '' }}{{ $opname->difference }}</span>
+                                </p>
+                            </div>
+                            <div class="flex gap-2">
+                                <form action="{{ route('manajer.approval.opname.approve', $opname->id) }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="px-3 py-1 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </form>
+                                <form action="{{ route('manajer.approval.opname.reject', $opname->id) }}" method="POST">
                                     @csrf
                                     <button type="submit" class="px-3 py-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold rounded">
                                         <i class="fas fa-times"></i>
