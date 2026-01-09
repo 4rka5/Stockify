@@ -30,24 +30,24 @@
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
                     <i class="fas fa-key text-blue-600 text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800">Lupa Password?</h2>
-                <p class="text-gray-600 mt-2 text-sm">Jangan khawatir, masukkan email Anda dan kami akan mengirimkan link untuk reset password.</p>
+                <h2 class="text-2xl font-bold text-gray-800 break-words">Lupa Password?</h2>
+                <p class="text-gray-600 mt-2 text-sm break-words">Jangan khawatir, masukkan email Anda dan kami akan mengirimkan link untuk reset password.</p>
             </div>
 
             @if (session('status'))
                 <div class="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-                    <div class="flex items-center text-green-800">
-                        <i class="fas fa-check-circle mr-2"></i>
-                        <span class="font-medium">{{ session('status') }}</span>
+                    <div class="flex items-start text-green-800">
+                        <i class="fas fa-check-circle mr-2 mt-0.5 flex-shrink-0"></i>
+                        <span class="font-medium break-words max-w-full" style="word-wrap: break-word; overflow-wrap: break-word;">{{ session('status') }}</span>
                     </div>
                 </div>
             @endif
 
             @if ($errors->any())
                 <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                    <div class="flex items-center text-red-800">
-                        <i class="fas fa-exclamation-circle mr-2"></i>
-                        <span class="font-medium">{{ $errors->first() }}</span>
+                    <div class="flex items-start text-red-800">
+                        <i class="fas fa-exclamation-circle mr-2 mt-0.5 flex-shrink-0"></i>
+                        <span class="font-medium break-words max-w-full" style="word-wrap: break-word; overflow-wrap: break-word;">{{ $errors->first() }}</span>
                     </div>
                 </div>
             @endif
