@@ -167,6 +167,8 @@ class StockOpnameController extends Controller
     {
         $opnames = StockOpname::with(['product', 'product.category', 'approver'])
             ->where('user_id', Auth::id())
+            ->whereNotNull('checked_at')
+            ->whereIn('status', ['pending', 'approved', 'rejected'])
             ->latest('checked_at')
             ->paginate(15);
 

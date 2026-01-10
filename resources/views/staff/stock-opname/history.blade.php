@@ -31,7 +31,7 @@
             <div class="space-y-4">
                 @foreach($opnames as $opname)
                     <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition">
-                        <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                        <div class="flex flex-col lg:flex-row lg:items-stretch lg:justify-between gap-4">
                             <!-- Left: Product Info -->
                             <div class="flex-1">
                                 <div class="flex items-center gap-2 mb-3">
@@ -39,7 +39,7 @@
                                         {{ $opname->status === 'pending' ? 'PENDING' : ($opname->status === 'approved' ? 'DISETUJUI' : 'DITOLAK') }}
                                     </span>
                                     <span class="text-xs text-gray-500">
-                                        {{ $opname->checked_at->format('d/m/Y H:i') }}
+                                        {{ $opname->checked_at ? $opname->checked_at->format('d/m/Y H:i') : '-' }}
                                     </span>
                                 </div>
 
@@ -77,7 +77,7 @@
                             </div>
 
                             <!-- Right: Status Info -->
-                            <div class="lg:min-w-[200px] bg-gray-50 rounded-lg p-4">
+                            <div class="lg:min-w-[200px] bg-gray-50 rounded-lg p-4 self-stretch flex items-center justify-center">
                                 @if($opname->status === 'pending')
                                     <div class="text-center">
                                         <i class="fas fa-clock text-yellow-500 text-3xl mb-2"></i>

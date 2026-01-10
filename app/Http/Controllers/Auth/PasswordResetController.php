@@ -51,7 +51,7 @@ class PasswordResetController extends Controller
         // In production, send email here
         // For now, we'll just return the token in the session for testing
 
-        return back()->with('status', 'Link reset password telah dibuat! Token: ' . $token . ' (Simpan token ini untuk reset password)');
+        return back()->with('status', 'Link reset password telah dibuat! http://127.0.0.1:8000/reset-password/' . $token . ' (Salin link ini untuk reset password)');
     }
 
     /**
