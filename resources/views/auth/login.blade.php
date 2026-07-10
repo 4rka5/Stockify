@@ -87,7 +87,7 @@
             </form>
         </div>
 
-        <!-- Demo Credentials -->
+        {{-- <!-- Demo Credentials -->
         <div class="mt-6 bg-white rounded-xl shadow-md p-6">
             <h3 class="text-sm font-semibold text-gray-700 mb-3 flex items-center">
                 <i class="fas fa-info-circle text-blue-600 mr-2"></i>
@@ -110,7 +110,7 @@
                     <span class="text-gray-500 italic">* Gunakan kredensial di atas untuk masuk dan mengeksplorasi fitur Stockify.</span>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <!-- Footer -->
         <div class="text-center mt-8 text-sm text-gray-600 pb-4">
